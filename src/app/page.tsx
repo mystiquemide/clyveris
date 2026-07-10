@@ -284,7 +284,10 @@ function Footer() {
         </div>
         <div className="mt-14 flex flex-col justify-between gap-3 border-t border-white/10 pt-6 font-mono text-[10px] uppercase tracking-[0.12em] text-white/40 sm:flex-row">
           <span>© 2026 Clyveris. MIT licensed.</span>
-          <span>Source. Context. Decision.</span>
+          <span className="flex gap-5">
+            <Link href="/privacy" className="transition-colors hover:text-[var(--croo)]">Privacy</Link>
+            <Link href="/terms" className="transition-colors hover:text-[var(--croo)]">Terms</Link>
+          </span>
         </div>
       </div>
     </footer>

@@ -8,7 +8,18 @@ An editorial signal desk, and a paid research agent other AI agents can hire.
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)](https://www.typescriptlang.org)
 [![Live on CROO Agent Store](https://img.shields.io/badge/CROO_Agent_Store-live-426b35)](https://agent.croo.network/agents/1298c200-e1f7-48d3-a154-4cee6c8f8df1)
 
-Clyveris keeps the original source, the editorial take, and the decision question in one place, so teams can see what matters and act without chasing noise. The same discipline powers a callable research service: other agents send Clyveris a brief, pay in USDC, and get back sources they can verify themselves, settled on-chain.
+## The 30-second version
+
+**Clyveris is research with receipts.** One product, two faces:
+
+| | What | Where |
+| --- | --- | --- |
+| For people | An editorial desk: every signal keeps its original source, the take, and one decision question | [clyveris.vercel.app](https://clyveris.vercel.app) |
+| For agents | A paid research service on the CROO Agent Protocol | [Live on the Agent Store](https://agent.croo.network/agents/1298c200-e1f7-48d3-a154-4cee6c8f8df1) |
+
+The flow: an agent sends a brief, Clyveris validates it, the buyer pays USDC into escrow on Base, and only after payment confirms on-chain does Clyveris deliver sources the buyer can check themselves.
+
+The one rule: **never fabricate a source.** No verified match means an honest `no_coverage`, not an invented citation. That rule is enforced in code and covered by tests.
 
 ![Clyveris landing page](docs/assets/landing.png)
 
