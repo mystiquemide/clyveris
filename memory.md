@@ -53,7 +53,7 @@
 - [~] Railway project `clyveris-agent`, production service `agent`, is linked and online. Deploy the current audited workspace, verify the CAP WebSocket log, then run the settlement test.
 - [x] Frontend is deployed through the existing Vercel Git integration at `clyveris.vercel.app`; pushes to `main` trigger production builds.
 - [x] Frontend redesign completed, including full-height hero, brand mark, verified favicon, revised footer headline placement, responsive layouts, and CROO agent section.
-- [~] Live settle test: user sent 0.3 USDC on Base to the Navigator buyer address `0x803230F998bea1D5C927801De1D89e7C5e08b87e` on 2026-07-10. Next: run the prepared order (topic matches signal-001) with the agent online, capture pay + deliver tx hashes for the demo video and BUIDL.
+- [x] Live settle test COMPLETE (2026-07-10 16:48): order `4a036acf-cfd8-4501-a731-a5dcf1d87503` ran the full CAP cycle. LOCK tx `0x090d35093893ad88f5ce6e01af9313fcbe31f0074184a0284585cfcd15ba224c`, DELIVER tx `0x88033c7e2ad3dc5320ba5156ff075a42acf822e8383e8c19a3b6a87a244d056c`, CLEAR tx `0x9e9c480ab7074e47fc5539cb95ffa33d50ee7c35212596ad83818f9620501e69` (0.10 USDC settled to Clyveris). Deliverable resolved `covered` against signal-001 with two JSON-encoded sources. On-chain settlement requirement is met.
 - [ ] Reward-eligibility note (not DQ): CROO flags <3 unique counterparty agents, <5 unique buyer wallets, and concentrated self-trading. One self-funded test order proves CAP integration but won't clear those thresholds; real third-party orders would need to come organically before judging.
 - [ ] Record the max-5-min demo video.
 - [ ] File the BUIDL on DoraHacks before 2026-07-12 10:00.
@@ -158,7 +158,7 @@
 - Backend (`agent/`) is lint-clean, typechecked, and covered by 32 passing tests. It now recovers paid orders after local state loss, handles duplicate paid events, bounds public input, writes job state atomically, and converts rich source objects to JSON strings at the CROO boundary to satisfy the Store's flat array schema.
 - Repo: public at github.com/mystiquemide/clyveris, MIT licensed, HANDOFF.md at root.
 - Frontend: full branded redesign completed with audited first-party source metadata, active SVG favicon, stable footer headline, responsive desktop/mobile layouts, and hardened response headers.
-- Deployment: Vercel Git integration is active and Railway `clyveris-agent/production/agent` is online. The first funded order locked 0.10 USDC on Base, then exposed a deliverable-schema mismatch and was rejected before settlement. The mapping fix is verified locally and needs deployment before a second funded test.
+- Deployment: Vercel Git integration is active and Railway `clyveris-agent/production/agent` is online on commit `2bc0819` (deployment `26b0947d`). The first funded order was rejected on the flat string-array schema mismatch and CROO refunded the locked 0.10 USDC to the buyer wallet (tx `0x701ab2ee...`). The second funded order settled end to end on 2026-07-10, so the CAP integration requirement is fully proven. Remaining for submission: demo video and DoraHacks BUIDL.
 - Update `memory.md` after every meaningful project change.
 
 ### Session 7 - 2026-07-10
@@ -166,3 +166,9 @@
 - Submitted funded CROO order `ee9716ec-e8c9-4954-9ba6-e91acb994e0b`. Escrow successfully locked 0.10 USDC on Base in transaction `0x8254066d4d28f3f5506197e1b1f2be24a7f34451e9c5eb3e3d4ef8c1ea14b15c`.
 - The live paid event reached Railway, but CROO rejected the delivery with `INVALID_DELIVERABLE` because its dashboard schema builder validates `sources` as a flat string array while Clyveris sent source objects. CROO then rejected the order, so this attempt has no delivery transaction hash.
 - Added a CAP-boundary serializer that JSON-encodes each structured source into a string without changing the internal research model. Added two regression tests. All 32 tests, lint, and the production build pass.
+
+### Session 8 - 2026-07-10
+- Verified on BaseScan that CROO refunded the first order's locked 0.10 USDC back to the Navigator buyer wallet (refund tx `0x701ab2ee...`, balance ~0.287 USDC). AA gas fees are paid in USDC, roughly 0.003-0.006 per operation.
+- With explicit user approval, placed the second funded order through the Navigator checkout (topic matching signal-001, total $0.11). Railway accepted the negotiation, received `order_paid`, and delivered with the flattened sources. CROO accepted the deliverable and settled.
+- Order `4a036acf-cfd8-4501-a731-a5dcf1d87503` COMPLETED: LOCK `0x090d3509...ba224c` (16:47:39), DELIVER `0x88033c7e...4d056c` (16:48:13), CLEAR `0x9e9c480a...501e69` (16:48:13, 0.10 USDC settled to Clyveris). Deliverable JSON verified in the buyer's My Orders view: status `covered`, two JSON-encoded sources, editorial take and decision question present.
+- Remaining submission work: record the max-5-min demo video (the three BaseScan tx links are the settlement proof) and file the DoraHacks BUIDL before 2026-07-12 10:00.
