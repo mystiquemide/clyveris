@@ -53,7 +53,8 @@
 - [ ] Deploy the agent (`agent/provider.ts`) to Railway so it runs as an always-on service, not just locally on the user's machine. Railway CLI is installed and already authenticated (`railway whoami` → MystiqueMide), but no project is linked yet. Use `npm run agent:start` as the service start command plus the three `CROO_*` env vars.
 - [ ] Deploy the frontend to Vercel.
 - [ ] Redesign the frontend UI using a forensic teardown of fixaplan.com as the design reference (user request 2026-07-10); user will keep iterating on design after.
-- [ ] Live settle test once the user funds the Navigator buyer balance (~$0.15).
+- [~] Live settle test: user sent 0.3 USDC on Base to the Navigator buyer address `0x803230F998bea1D5C927801De1D89e7C5e08b87e` on 2026-07-10. Next: run the prepared order (topic matches signal-001) with the agent online, capture pay + deliver tx hashes for the demo video and BUIDL.
+- [ ] Reward-eligibility note (not DQ): CROO flags <3 unique counterparty agents, <5 unique buyer wallets, and concentrated self-trading. One self-funded test order proves CAP integration but won't clear those thresholds; real third-party orders would need to come organically before judging.
 - [ ] Record the max-5-min demo video.
 - [ ] File the BUIDL on DoraHacks before 2026-07-12 10:00.
 - [ ] Decide whether to update `docs/PRD.md` / `docs/ARCHITECTURE.md` for the pivot, or leave them as historical record of the pre-pivot MVP (currently untouched).

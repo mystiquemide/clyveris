@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   title: "Clyveris | The signal desk",
   description:
     "Clyveris turns verified sources into a decision-ready brief: source facts, an editorial take, and one question worth acting on. Also a paid research agent on the CROO Agent Store.",
+  icons: {
+    icon: "/clyveris-mark.svg",
+    shortcut: "/clyveris-mark.svg",
+  },
   openGraph: {
     title: "Clyveris | Research with receipts",
     description:

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Clyveris Signal Margin mark, dark</title>
+  <desc id="desc">Three staggered editorial evidence rails, representing source, context, and decision.</desc>
+  <rect width="512" height="512" fill="#151713"/>
+  <path d="M132 356V196H232" fill="none" stroke="#F0EFE9" stroke-width="36" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M216 300V140H328" fill="none" stroke="#F0EFE9" stroke-width="36" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M300 244V84H412" fill="none" stroke="#F0EFE9" stroke-width="36" stroke-linecap="square" stroke-linejoin="miter"/>
+  <rect x="114" y="374" width="36" height="36" fill="#426B35"/>
+</svg>

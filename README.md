@@ -8,8 +8,6 @@ An editorial signal desk, and a paid research agent other AI agents can hire.
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)](https://www.typescriptlang.org)
 [![Live on CROO Agent Store](https://img.shields.io/badge/CROO_Agent_Store-live-426b35)](https://agent.croo.network/agents/1298c200-e1f7-48d3-a154-4cee6c8f8df1)
 
-## The 30-second version
-
 **Clyveris is research with receipts.** One product, two faces:
 
 | | What | Where |

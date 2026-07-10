@@ -34,7 +34,10 @@ const method = [
 function PillNav() {
   return (
     <nav className="fixed left-1/2 top-4 z-50 flex -translate-x-1/2 items-center gap-6 rounded-full bg-white/90 py-2.5 pl-5 pr-2.5 shadow-lg shadow-black/5 backdrop-blur">
-      <Link href="/" className="font-mono text-sm font-bold tracking-[-0.08em] text-[var(--ink)]">CLYVERIS</Link>
+      <Link href="/" className="flex items-center gap-2.5 font-mono text-sm font-bold tracking-[-0.08em] text-[var(--ink)]">
+        <Image src="/clyveris-mark.svg" alt="" width={24} height={24} className="rounded-[6px]" />
+        CLYVERIS
+      </Link>
       <div className="hidden items-center gap-5 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--muted)] sm:flex">
         <a href="#method" className="transition-colors hover:text-[var(--ink)]">Method</a>
         <a href="#agent" className="transition-colors hover:text-[var(--ink)]">Agent</a>
@@ -52,7 +55,7 @@ function PillNav() {
 
 function Hero() {
   return (
-    <header className="relative flex min-h-[94vh] flex-col justify-end overflow-hidden bg-[#5a5347]">
+    <header className="relative flex min-h-screen flex-col justify-end overflow-hidden bg-[#5a5347]">
       <Image
         src="/hero-desk.jpg"
         alt="A reader enjoying the morning paper by a sunny window"
@@ -281,12 +284,12 @@ function SignalsSection() {
 function Footer() {
   return (
     <footer className="relative px-4 pb-4">
-      <Reveal>
-        <p className="pointer-events-none mx-auto max-w-[1440px] text-center text-[clamp(3rem,9vw,9rem)] font-semibold leading-[0.9] tracking-[-0.05em] text-[var(--ghost)]">
+      <Reveal className="relative z-10">
+        <p className="pointer-events-none mx-auto -mb-[0.34em] max-w-[1440px] text-center text-[clamp(3rem,9vw,9rem)] font-semibold leading-[0.9] tracking-[-0.05em] text-[var(--ghost)]">
           Clearer signals, better rooms
         </p>
       </Reveal>
-      <div className="mx-auto -mt-6 max-w-[1440px] rounded-[32px] bg-[var(--ink)] px-6 py-12 text-white sm:px-12">
+      <div className="relative mx-auto max-w-[1440px] rounded-[32px] bg-[var(--ink)] px-6 pb-12 pt-24 text-white sm:px-12 sm:pt-28">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <p className="font-mono text-lg font-bold tracking-[-0.08em]">CLYVERIS</p>
@@ -323,7 +326,7 @@ function Footer() {
           </div>
         </div>
         <div className="mt-14 flex flex-col justify-between gap-3 border-t border-white/10 pt-6 font-mono text-[11px] uppercase tracking-[0.12em] text-white/40 sm:flex-row">
-          <span>© 2026 Clyveris. MIT licensed.</span>
+          <span>© 2026 Clyveris</span>
           <span className="flex gap-5">
             <Link href="/privacy" className="transition-colors hover:text-[var(--croo)]">Privacy</Link>
             <Link href="/terms" className="transition-colors hover:text-[var(--croo)]">Terms</Link>
