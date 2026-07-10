@@ -54,13 +54,13 @@ function Hero() {
     <header className="relative flex min-h-[94vh] flex-col justify-end overflow-hidden">
       <Image
         src="/hero-desk.jpg"
-        alt="A reader working through a source by the last light of a window"
+        alt="A reader enjoying the morning paper by a sunny window"
         fill
         priority
         sizes="100vw"
         className="object-cover"
       />
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 bg-black/35" />
       <div className="relative mx-auto w-full max-w-[1440px] px-5 pb-40 pt-44 text-center sm:px-8">
         <Reveal>
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/70">Independent intelligence</p>
@@ -101,12 +101,12 @@ function SplitSection() {
         <div className="relative min-h-[70vh]">
           <Image
             src="/signal-review.jpg"
-            alt="A researcher checking a printed source line by line under a lamp"
+            alt="A reader holding a broadsheet open against a bright window"
             fill
             sizes="(max-width: 1440px) 100vw, 1440px"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-black/30" />
+          <div className="absolute inset-0 bg-black/20" />
           <div className="absolute inset-x-5 bottom-8 space-y-3 sm:inset-x-12 sm:bottom-12">
             <div className="max-w-2xl overflow-hidden rounded-2xl bg-black/45 backdrop-blur">
               <div className="bar-fill flex items-center justify-between gap-6 rounded-2xl bg-white/85 px-5 py-4">

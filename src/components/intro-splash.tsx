@@ -1,9 +1,15 @@
 "use client"
 
-import { useState, type AnimationEvent } from "react"
+import { useEffect, useState, type AnimationEvent } from "react"
 
 export function IntroSplash() {
   const [done, setDone] = useState(false)
+
+  useEffect(() => {
+    // Fallback in case the animationend event fires before hydration.
+    const timer = setTimeout(() => setDone(true), 3000)
+    return () => clearTimeout(timer)
+  }, [])
 
   if (done) return null
 
