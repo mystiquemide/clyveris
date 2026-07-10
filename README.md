@@ -63,7 +63,7 @@ The delivery lifecycle is a strict state machine: `requested -> payment_required
 | Frontend | Next.js 16 (App Router), React 19, Tailwind CSS 4, Lucide icons |
 | Agent | Node.js 20+, TypeScript strict, `@croo-network/sdk`, zod |
 | Settlement | USDC on Base via CAP escrow |
-| Tests | Vitest (25 tests across schema, matching, state machine, persistence) |
+| Tests | Vitest (30 tests across schema, matching, state machine, recovery, and persistence) |
 | CI | GitHub Actions: lint, test, build on every push and PR |
 
 ## Quick start
@@ -120,7 +120,7 @@ The frontend requires none. See `.env.example`.
 
 ## Verification
 
-`npm run lint`, `npm test` (25 passing), and `npm run build` are all green on `main` and enforced in CI on every push and pull request.
+`npm run lint`, `npm test` (30 passing), and `npm run build` are all green locally and enforced in CI on every push and pull request.
 
 ## Deployment
 

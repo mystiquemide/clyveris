@@ -1,6 +1,6 @@
 import { mkdirSync, readFileSync, renameSync, writeFileSync, existsSync } from "node:fs"
 import { dirname, join } from "node:path"
-import type { Negotiation } from "@croo-network/sdk"
+import type { Negotiation, Order } from "@croo-network/sdk"
 import type { ResearchBriefRequest, ResearchDeliverable, ResearchJob } from "./types"
 
 const DEFAULT_STORE_PATH = join(__dirname, "data", "jobs.json")
@@ -21,6 +21,15 @@ export function createJob(
     createdAt: timestamp,
     updatedAt: timestamp,
   }
+}
+
+export function recoverPaymentRequiredJob(
+  negotiation: Negotiation,
+  brief: ResearchBriefRequest,
+  order: Pick<Order, "orderId" | "price" | "paymentToken">,
+  now: () => Date = () => new Date(),
+): ResearchJob {
+  return markPaymentRequired(createJob(negotiation, brief, now), order.orderId, order.price, order.paymentToken, now)
 }
 
 export function markPaymentRequired(
@@ -98,7 +107,9 @@ export class JobStore {
 
   private persist(): void {
     mkdirSync(dirname(this.path), { recursive: true })
-    writeFileSync(this.path, JSON.stringify([...this.jobs.values()], null, 2))
+    const tempPath = `${this.path}.tmp`
+    writeFileSync(tempPath, JSON.stringify([...this.jobs.values()], null, 2))
+    renameSync(tempPath, this.path)
   }
 
   save(job: ResearchJob): ResearchJob {

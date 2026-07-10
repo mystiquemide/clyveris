@@ -12,6 +12,7 @@ import {
   markPaymentRequired,
   markRejected,
   markResearching,
+  recoverPaymentRequiredJob,
 } from "./jobStore"
 import type { ResearchDeliverable } from "./types"
 
@@ -60,6 +61,19 @@ describe("job state machine", () => {
     expect(withOrder.status).toBe("payment_required")
     expect(withOrder.orderId).toBe("order-1")
     expect(withOrder.result).toBeUndefined()
+  })
+
+  it("recovers a payment-required job from CROO order data after local state loss", () => {
+    const recovered = recoverPaymentRequiredJob(
+      fakeNegotiation(),
+      { topic: "pricing pressure" },
+      { orderId: "order-1", price: "1000000", paymentToken: "USDC" },
+      fixedNow,
+    )
+
+    expect(recovered.status).toBe("payment_required")
+    expect(recovered.orderId).toBe("order-1")
+    expect(recovered.brief.topic).toBe("pricing pressure")
   })
 
   it("rejects skipping straight from payment_required to delivered", () => {
@@ -133,6 +147,7 @@ describe("JobStore persistence", () => {
     const delivered = markDelivered(researching, sampleResult, "0xdeliver", fixedNow)
     store.save(delivered)
 
+    expect(existsSync(`${path}.tmp`)).toBe(false)
     const onDisk = JSON.parse(readFileSync(path, "utf-8"))
     expect(onDisk).toHaveLength(1)
     expect(onDisk[0].status).toBe("delivered")

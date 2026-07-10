@@ -124,7 +124,7 @@ export default function DocsPage() {
     {
       "publisher": "Gartner",
       "url": "https://www.gartner.com/en/documents/7363830",
-      "publishedAt": "2026-07-10",
+      "publishedAt": "2026-01-26",
       "facts": ["Decision intelligence brings decision modelling, analytics, and AI into one discipline."]
     }
   ],

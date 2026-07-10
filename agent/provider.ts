@@ -11,6 +11,7 @@ import {
   markPaymentRequired,
   markRejected,
   markResearching,
+  recoverPaymentRequiredJob,
 } from "./jobStore"
 
 function requireEnv(name: string): string {
@@ -48,6 +49,7 @@ export async function startProvider() {
   const client = new AgentClient({ baseURL, wsURL, logger: redactingLogger(sdkKey) }, sdkKey)
   const store = new JobStore()
   const stream = await client.connectWebSocket()
+  const processingOrderIds = new Set<string>()
 
   stream.on(EventType.NegotiationCreated, async (event) => {
     const negotiationId = event.negotiation_id
@@ -84,21 +86,50 @@ export async function startProvider() {
   stream.on(EventType.OrderPaid, async (event) => {
     const orderId = event.order_id
     if (!orderId) return
-
-    let job = store.all().find((candidate) => candidate.orderId === orderId)
-    if (!job) {
-      console.error(`paid order ${orderId} has no local job record, rejecting so the buyer is not left hanging`)
-      await client.rejectOrder(orderId, "provider has no record of this order").catch(() => undefined)
+    if (processingOrderIds.has(orderId)) {
+      console.warn(`ignoring duplicate paid event while order ${orderId} is already processing`)
       return
     }
 
+    processingOrderIds.add(orderId)
+    let job = store.all().find((candidate) => candidate.orderId === orderId)
+
     try {
       const order = await client.getOrder(orderId)
-      job = markPaid(job, order.payTxHash)
-      store.save(job)
 
-      job = markResearching(job)
-      store.save(job)
+      if (!job) {
+        const negotiation = await client.getNegotiation(order.negotiationId)
+        const parsed = parseBriefRequest(negotiation.requirements)
+        if (!parsed.ok) {
+          await client.rejectOrder(orderId, `stored brief is invalid: ${parsed.reason}`)
+          console.error(`cannot recover paid order ${orderId}: ${parsed.reason}`)
+          return
+        }
+
+        job = recoverPaymentRequiredJob(negotiation, parsed.brief, order)
+        store.save(job)
+        console.warn(`recovered paid order ${orderId} from CROO after local state was unavailable`)
+      }
+
+      if (job.status === "delivered") {
+        console.info(`ignoring duplicate paid event for delivered order ${orderId}`)
+        return
+      }
+      if (job.status === "requested") {
+        job = markPaymentRequired(job, order.orderId, order.price, order.paymentToken)
+        store.save(job)
+      }
+      if (job.status === "payment_required") {
+        job = markPaid(job, order.payTxHash)
+        store.save(job)
+      }
+      if (job.status === "paid") {
+        job = markResearching(job)
+        store.save(job)
+      }
+      if (job.status !== "researching") {
+        throw new Error(`cannot resume paid order ${orderId} from ${job.status}`)
+      }
 
       const result = researchBrief(job.brief, signals)
       const delivery = await client.deliverOrder(orderId, {
@@ -111,9 +142,11 @@ export async function startProvider() {
       console.info(`delivered order ${orderId}: ${result.status}`)
     } catch (error) {
       const reason = error instanceof Error ? error.message : "unknown delivery failure"
-      store.save(markFailed(job, reason))
+      if (job && job.status !== "delivered") store.save(markFailed(job, reason))
       await client.rejectOrder(orderId, reason).catch(() => undefined)
       console.error(`failed to deliver order ${orderId}: ${reason}`)
+    } finally {
+      processingOrderIds.delete(orderId)
     }
   })
 

@@ -21,6 +21,14 @@ describe("signal domain", () => {
     expect(signals).toHaveLength(3)
   })
 
+  it("keeps exact first-party URLs and publication dates for the curated corpus", () => {
+    expect(signals.map((signal) => signal.source)).toEqual([
+      { publisher: "Gartner", url: "https://www.gartner.com/en/documents/7363830", publishedAt: "2026-01-26" },
+      { publisher: "Feedly", url: "https://feedly.com/changelog/add-specific-context-to-your-market-intelligence-queries", publishedAt: "2026-04-01" },
+      { publisher: "Google Trends", url: "https://developers.google.com/search/blog/2025/07/trends-api", publishedAt: "2025-07-24" },
+    ])
+  })
+
   it("filters saved signals using supplied ids", () => {
     const result = filterSignals(signals, "saved", new Set(["signal-002"]))
 

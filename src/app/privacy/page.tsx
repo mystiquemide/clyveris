@@ -23,8 +23,9 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-semibold tracking-[-0.03em]">The desk</h2>
             <p className="mt-3 text-[var(--muted)]">
-              The Clyveris site has no accounts, no sign-up, and no forms. We do not collect names, email addresses, or any
-              other personal information from visitors. We currently run no analytics and set no tracking cookies.
+              The Clyveris site has no accounts or sign-up. The sample brief form runs entirely in your browser and sends
+              nothing to Clyveris. We do not collect names, email addresses, or other personal information from visitors.
+              We currently run no analytics and set no tracking cookies.
             </p>
             <p className="mt-3 text-[var(--muted)]">
               When you bookmark a signal, that choice is stored in your browser&apos;s session storage on your own device. It

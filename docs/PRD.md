@@ -1,3 +1,5 @@
+> Historical planning document. It describes the pre-CAP desk MVP and isn't the current deployment source of truth. Use [README.md](../README.md), [HANDOFF.md](../HANDOFF.md), and [memory.md](../memory.md) for the live Clyveris architecture and status.
+
 # Clyveris MVP PRD
 
 ## Research

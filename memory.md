@@ -4,12 +4,12 @@
 - Clyveris is pivoting from a standalone editorial signal desk into a paid Research & Intelligence Agent on CROO, submitting to the CROO Agent Hackathon.
 - Deadline: 2026-07-12 10:00 (submission window closes; confirmed live on DoraHacks 2026-07-10, "2 days left").
 - Track: Research & Intelligence Agents, "paid research with verifiable sources."
-- Current status: backend agent is live on CROO Agent Store. Frontend now has one small addition (a "Hire Clyveris on CROO" section on the landing page linking to the live listing); otherwise still the pre-pivot desk MVP. User explicitly asked for "both" backend and frontend work to continue, no longer backend-only.
+- Current status: the redesigned frontend is live through Vercel Git integration, and the paid agent is listed on CROO. The current audited agent build is ready for Railway deployment, followed by the funded settlement test.
 - Primary language and framework: TypeScript. Frontend: Next.js 16, React 19, Tailwind CSS 4. Agent: standalone Node process using `@croo-network/sdk`.
 - Hard submission requirements (all five, verified from the hackathon detail page): listed on CROO Agent Store, integrated with CAP with real on-chain settlement, public repo with permissive license, README + max-5-min demo video with SDK methods used, BUIDL filed on DoraHacks.
 
 ## PROJECT STRUCTURE
-- `src/app/` - Next.js routes, layout, styles, landing page, and dashboard (unchanged, frontend frozen for now).
+- `src/app/` - Next.js routes, branded landing page, dashboard, signal details, docs, privacy, terms, and 404 page.
 - `src/lib/signals.ts` - curated signal seed data; doubles as the research agent's source corpus.
 - `agent/` - the CAP research agent, a standalone Node/TS process, not part of the Next.js build.
   - `agent/types.ts` - job and deliverable types.
@@ -17,7 +17,7 @@
   - `agent/research.ts` - pure matching pipeline over `src/lib/signals.ts`; returns `status: "no_coverage"` instead of fabricating a source when nothing matches.
   - `agent/jobStore.ts` - job state machine (`requested -> payment_required -> paid -> researching -> delivered`, or `rejected`/`failed`) plus JSON-file persistence to `agent/data/jobs.json` (gitignored).
   - `agent/provider.ts` - wires `AgentClient` (CAP SDK) to the pipeline; entry point for `npm run agent`.
-- `docs/` - product and technical documents (written for the pre-pivot desk MVP; not yet updated for the CAP pivot).
+- `docs/` - current deployment, design-system, demo, and audit documents. Pre-CAP planning files are labeled historical.
 
 ## DATABASE / DATA MODELS
 - No relational database. Frontend uses the seed `Signal` model (publisher, source URL, published date, source facts, editorial take, decision question, tags, category).
@@ -50,21 +50,21 @@
 - [x] Hardened the agent for unattended running: try/catch around the NegotiationCreated handler (an SDK error no longer crashes the process), paid orders with no local job record are rejected loudly instead of silently dropped, SIGTERM handled alongside SIGINT, corrupt `jobs.json` is set aside instead of crash-looping, `markFailed` refuses to overwrite a delivered job, topic capped at 500 chars, matching now needs 2 overlapping tokens (or all tokens for one-word briefs) so a single generic word is never sold as coverage. 5 new tests, 25 total, all passing.
 - [x] Frontend fixes: dashboard date is computed at render (was hardcoded "Thursday July 10"), saved signals now persist to sessionStorage via useSyncExternalStore (the copy's promise is finally true), landing brief cards link to /dashboard. Empty `prisma/` dir deleted. `tsx` moved to dependencies and `agent:start` script added so hosts without a `.env` file can run the agent.
 - [x] `HANDOFF.md` added at repo root: current state, what's left, deploy notes, CROO platform quirks.
-- [ ] Deploy the agent (`agent/provider.ts`) to Railway so it runs as an always-on service, not just locally on the user's machine. Railway CLI is installed and already authenticated (`railway whoami` → MystiqueMide), but no project is linked yet. Use `npm run agent:start` as the service start command plus the three `CROO_*` env vars.
-- [ ] Deploy the frontend to Vercel.
-- [ ] Redesign the frontend UI using a forensic teardown of fixaplan.com as the design reference (user request 2026-07-10); user will keep iterating on design after.
+- [~] Railway project `clyveris-agent`, production service `agent`, is linked and online. Deploy the current audited workspace, verify the CAP WebSocket log, then run the settlement test.
+- [x] Frontend is deployed through the existing Vercel Git integration at `clyveris.vercel.app`; pushes to `main` trigger production builds.
+- [x] Frontend redesign completed, including full-height hero, brand mark, verified favicon, revised footer headline placement, responsive layouts, and CROO agent section.
 - [~] Live settle test: user sent 0.3 USDC on Base to the Navigator buyer address `0x803230F998bea1D5C927801De1D89e7C5e08b87e` on 2026-07-10. Next: run the prepared order (topic matches signal-001) with the agent online, capture pay + deliver tx hashes for the demo video and BUIDL.
 - [ ] Reward-eligibility note (not DQ): CROO flags <3 unique counterparty agents, <5 unique buyer wallets, and concentrated self-trading. One self-funded test order proves CAP integration but won't clear those thresholds; real third-party orders would need to come organically before judging.
 - [ ] Record the max-5-min demo video.
 - [ ] File the BUIDL on DoraHacks before 2026-07-12 10:00.
-- [ ] Decide whether to update `docs/PRD.md` / `docs/ARCHITECTURE.md` for the pivot, or leave them as historical record of the pre-pivot MVP (currently untouched).
+- [x] Pre-CAP planning documents are preserved as historical records and labeled clearly so public readers use README, HANDOFF, and memory as current sources.
 
 ## COMPLETED FEATURES
 - Branded landing page, static signal-desk interface, Vercel/Railway build config (pre-pivot, still intact).
 - CAP research agent backend: brief intake, provenance-preserving matching against curated signals, payment-gated delivery, on-chain settlement wiring, job persistence.
 
 ## KNOWN BUGS / TECH DEBT
-- `docs/PRD.md`, `docs/ARCHITECTURE.md`, `docs/DESIGN.md`, `docs/TASKS.md`, `docs/ANALYTICS.md` describe the pre-pivot standalone-desk product; not yet reconciled with the CAP pivot.
+- The pre-CAP PRD, architecture, design, tasks, and analytics files remain historical, with a clear banner pointing readers to current documentation.
 - The agent's research corpus is the same 3-signal seed dataset as the frontend; real hackathon usage will expose thin coverage (by design, it returns `no_coverage` rather than fabricating, but that means most novel briefs won't resolve yet).
 - The Claude-in-Chrome `file_upload` MCP tool cannot upload the agent avatar to the CROO Dashboard, it errors "no longer accepts host filesystem paths" and expects a `files` param the exposed schema doesn't have. Avatar upload on agent.croo.network has to be done by hand (drag-and-drop), the generated mark is at `~/Downloads/clyveris-agent-avatar.png`.
 - CROO's registration flow (Biconomy Nexus `K1Validator`) rejects a connecting wallet address that already has on-chain code (e.g. an EIP-7702 delegation, common now with wallets like Phantom that auto-upgrade EOAs for gas sponsorship/session keys). It needs a plain, never-delegated EOA. Fixed by connecting a fresh Phantom account instead of debugging the delegation.
@@ -80,11 +80,12 @@
 | `lucide-react` | 1.21.0 | Icons |
 | `@croo-network/sdk` | ^0.2.1 | CAP client for the research agent (negotiation, payment, delivery, settlement) |
 | `zod` | ^4.4.3 | Brief request validation |
-| `tsx` | ^4.23.0 (dev) | Runs the standalone `agent/` TypeScript process |
+| `tsx` | ^4.23.0 | Runs the standalone `agent/` TypeScript process in local and Railway production installs |
+| `postcss` | 8.5.10 override | Forces the patched CSS stringifier across Next.js, Tailwind, and Vite dependency branches |
 
 ## IMPORTANT DECISIONS MADE
 - Pivoted from a standalone editorial desk to a paid Research & Intelligence agent on CROO, driven by the CROO Agent Hackathon's track requirements (CAP integration, on-chain USDC settlement, Agent Store listing).
-- Scope this pivot to backend only for now; the Next.js frontend stays untouched until explicitly requested.
+- The pivot started backend-only, then expanded to the reader-facing frontend after explicit approval on 2026-07-10.
 - The agent's research corpus reuses the existing curated `src/lib/signals.ts` seed data rather than adding a live web-scraping/search vendor, fastest to demo within the 2-day deadline and consistent with the existing editorial-integrity rule of never fabricating sources.
 - The CAP provider runs as its own standalone Node process (`agent/`, started via `npm run agent`), separate from the Next.js app, because it must hold a persistent WebSocket connection, which Vercel serverless functions can't do. It deploys to Railway (already configured in this repo).
 - Job state is persisted to a local JSON file, not a database, to avoid adding a DB vendor under hackathon time pressure.
@@ -143,9 +144,19 @@
 - GitHub launch polish: README rewritten product-first with real screenshots (docs/assets/, captured via Playwright + system Chrome), Mermaid architecture, truthful badges; added CONTRIBUTING, SECURITY, CHANGELOG, docs/DEPLOYMENT.md, docs/DESIGN-SYSTEM.md, CodeQL, Dependabot, issue/PR templates. Tagged v0.1.0.
 - Railway agent deploy is prepped (railway.toml runs agent:start) but `railway up` was blocked by the permission classifier as an unrequested production deploy; user needs to run `railway up` or say the word.
 
+### Session 6 - 2026-07-10
+- Continued from the interrupted deployment queue and pushed landing-page polish, brand assets, the active SVG favicon, and the first demo plan in commit `41e1e6a`.
+- Ran a public-release audit covering tracked history, ignored env files, dependencies, routes, headers, source integrity, CAP input boundaries, job recovery, persistence, and public copy. No real secret was found, and `npm audit` reported zero known vulnerabilities.
+- Fixed inaccurate source dates and unsupported facts using dated first-party Gartner, Feedly, and Google pages.
+- Hardened CAP input to 16 KB, capped tags at 64 characters, rejected unknown fields, recovered paid orders after local state loss, ignored duplicate paid events, and made job-store writes atomic.
+- Corrected the privacy page, added CSP, HSTS, and COOP headers, labeled pre-CAP docs as historical, rewrote the demo to the requested two-minute structure, removed the hero eyebrow, and stabilized the footer headline above the card.
+- Verification: lint clean, 30 tests pass, production build passes, all eight public routes return 200, unknown signal slug returns 404, security headers are present, and desktop/mobile browser checks show no overflow, collision, console error, or framework overlay.
+- A newly published PostCSS advisory appeared during the final gate. Added an npm override to 8.5.10, regenerated the lockfile, and confirmed the full dependency audit returns zero vulnerabilities.
+- Standing UI workflow: use the in-app Browser for web work and Computer Use for Windows apps outside the browser.
+
 ## CURRENT BUILD STATE
-- Backend (`agent/`) built, tested (25 tests), lint-clean, typechecked, hardened against crashes/silent drops, live against the real "Clyveris" CROO agent when running. Store-listed at $0.10/call. Agent's own wallet holds $0.10 USDC. No real order settled yet, blocked on buyer-side funding and a CROO platform bug, not on this codebase.
+- Backend (`agent/`) is lint-clean, typechecked, and covered by 30 passing tests. It now recovers paid orders after local state loss, handles duplicate paid events, bounds public input, and writes job state atomically. The CROO service remains listed at $0.10 per call.
 - Repo: public at github.com/mystiquemide/clyveris, MIT licensed, HANDOFF.md at root.
-- Frontend: pre-pivot MVP desk plus the CROO listing section; date and saved-signals fixes in. Full redesign (fixaplan.com-inspired) queued.
-- Deployment: agent runs locally via `npm run agent`, deploy-ready for Railway via `npm run agent:start`. Vercel deploy for the frontend queued.
+- Frontend: full branded redesign completed with audited first-party source metadata, active SVG favicon, stable footer headline, responsive desktop/mobile layouts, and hardened response headers.
+- Deployment: Vercel Git integration is active. Railway is linked to `clyveris-agent/production/agent`; the current audited workspace still needs `railway up`, health verification, and the funded settlement test.
 - Update `memory.md` after every meaningful project change.

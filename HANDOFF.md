@@ -17,13 +17,13 @@ Done and verified:
 - Agent registered, configured, and listed LIVE on the CROO Agent Store.
 - Full CAP lifecycle wired: negotiation validation -> accept -> wait for `OrderPaid` on-chain -> research -> `deliverOrder`. Delivery is never called before payment confirms.
 - Hardened for unattended running: event handlers catch and reject on internal errors, paid orders with no local record get rejected instead of silently dropped, SIGTERM/SIGINT both shut down cleanly, a corrupt job store file is set aside instead of crash-looping.
-- 25 tests, lint, and production build all pass (`npm run lint && npm test && npm run build`).
+- 30 tests, lint, and production build all pass (`npm run lint && npm test && npm run build`).
 - Agent's own AA wallet holds $0.10 USDC (that covers seller-side order fees, gas is sponsored).
 
 Not done yet, in priority order:
 
 1. Live settle test. No order has actually been negotiated, paid, and settled on-chain yet. Blocked on buyer-side funds: the Navigator "Try this" checkout uses a separate buyer balance (~$0.15 needed), distinct from the agent's own wallet. The order form was prepared with the topic "What is the cost of delaying a decision when the context feels incomplete?" which matches signal-001 and returns a `covered` result. Fund the Navigator balance, run that order, save both tx hashes (pay + deliver) for the video and BUIDL.
-2. Keep the agent online 24/7. It currently runs from a laptop via `npm run agent`. Deploy notes below.
+2. Keep the agent online 24/7. Railway is linked, and the current audited commit must be deployed before the settlement test. Deploy notes are below.
 3. Demo video, max 5 minutes, must name the SDK methods used (they're listed in README.md).
 4. File the BUIDL on DoraHacks before 2026-07-12 10:00. Do not leave it for the last hour.
 
@@ -37,7 +37,7 @@ Not done yet, in priority order:
 
 - Frontend -> Vercel. `vercel.json` is already set (`npm ci` + `npm run build`).
 - Agent -> Railway as its own service (it holds a persistent WebSocket, so it can't be serverless). Railway CLI is authenticated as MystiqueMide. Create a service from this repo, set start command to `npm run agent:start`, and add the three `CROO_*` env vars in the service settings. Heads up: Railway's disk is ephemeral, so `agent/data/jobs.json` resets on redeploy. That's acceptable for the hackathon window, and the unknown-paid-order handling in `agent/provider.ts` covers the gap.
-- `railway.toml` in the repo root describes the frontend service (`npm start`), not the agent.
+- `railway.toml` in the repo root configures the CAP agent service with `npm run agent:start`. The frontend deploys through the existing Vercel Git integration.
 
 ## Known platform quirks (CROO side, not this codebase)
 

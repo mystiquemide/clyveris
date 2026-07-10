@@ -67,14 +67,11 @@ function Hero() {
       <div className="absolute inset-0 bg-black/35" />
       <div className="relative mx-auto w-full max-w-[1440px] px-5 pb-40 pt-44 text-center sm:px-8">
         <Reveal>
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/70">Independent intelligence</p>
-        </Reveal>
-        <Reveal delay={120}>
-          <h1 className="mx-auto mt-6 max-w-5xl text-[clamp(3.2rem,8.5vw,7.5rem)] font-semibold leading-[0.9] tracking-[-0.05em] text-white">
+          <h1 className="mx-auto max-w-5xl text-[clamp(3.2rem,8.5vw,7.5rem)] font-semibold leading-[0.9] tracking-[-0.05em] text-white">
             See the shift before it becomes obvious
           </h1>
         </Reveal>
-        <Reveal delay={240}>
+        <Reveal delay={120}>
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-7 text-white/85">
             Clyveris turns verified sources into a decision-ready brief: source facts, an editorial take, and one question
             worth acting on.
@@ -284,12 +281,10 @@ function SignalsSection() {
 function Footer() {
   return (
     <footer className="relative px-4 pb-4">
-      <Reveal className="relative z-10">
-        <p className="pointer-events-none mx-auto -mb-[0.34em] max-w-[1440px] text-center text-[clamp(3rem,9vw,9rem)] font-semibold leading-[0.9] tracking-[-0.05em] text-[var(--ghost)]">
-          Clearer signals, better rooms
-        </p>
-      </Reveal>
-      <div className="relative mx-auto max-w-[1440px] rounded-[32px] bg-[var(--ink)] px-6 pb-12 pt-24 text-white sm:px-12 sm:pt-28">
+      <p className="pointer-events-none mx-auto max-w-[1440px] px-2 pb-5 text-center text-[clamp(2.5rem,7vw,7rem)] font-semibold leading-[0.9] tracking-[-0.05em] text-[var(--ghost)]">
+        Clearer signals, better rooms
+      </p>
+      <div className="relative mx-auto max-w-[1440px] rounded-[32px] bg-[var(--ink)] px-6 py-12 text-white sm:px-12">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <p className="font-mono text-lg font-bold tracking-[-0.08em]">CLYVERIS</p>

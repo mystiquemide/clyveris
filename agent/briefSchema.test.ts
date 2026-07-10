@@ -43,4 +43,23 @@ describe("parseBriefRequest", () => {
 
     expect(result.ok).toBe(false)
   })
+
+  it("rejects oversized raw requirements before parsing", () => {
+    const result = parseBriefRequest("x".repeat(16_385))
+
+    expect(result).toEqual({ ok: false, reason: "requirements must be at most 16 KB" })
+  })
+
+  it("rejects tags longer than 64 characters", () => {
+    const result = parseBriefRequest(JSON.stringify({ topic: "pricing pressure", tags: ["x".repeat(65)] }))
+
+    expect(result.ok).toBe(false)
+    if (!result.ok) expect(result.reason).toMatch(/at most 64/)
+  })
+
+  it("rejects undeclared fields", () => {
+    const result = parseBriefRequest(JSON.stringify({ topic: "pricing pressure", callbackUrl: "https://example.com" }))
+
+    expect(result.ok).toBe(false)
+  })
 })
