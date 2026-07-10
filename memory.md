@@ -4,7 +4,7 @@
 - Clyveris is pivoting from a standalone editorial signal desk into a paid Research & Intelligence Agent on CROO, submitting to the CROO Agent Hackathon.
 - Deadline: 2026-07-12 10:00 (submission window closes; confirmed live on DoraHacks 2026-07-10, "2 days left").
 - Track: Research & Intelligence Agents, "paid research with verifiable sources."
-- Current status: backend-only build in progress. Frontend (`src/`) is frozen as-is until explicitly asked to change it.
+- Current status: backend agent is live on CROO Agent Store. Frontend now has one small addition (a "Hire Clyveris on CROO" section on the landing page linking to the live listing); otherwise still the pre-pivot desk MVP. User explicitly asked for "both" backend and frontend work to continue, no longer backend-only.
 - Primary language and framework: TypeScript. Frontend: Next.js 16, React 19, Tailwind CSS 4. Agent: standalone Node process using `@croo-network/sdk`.
 - Hard submission requirements (all five, verified from the hackathon detail page): listed on CROO Agent Store, integrated with CAP with real on-chain settlement, public repo with permissive license, README + max-5-min demo video with SDK methods used, BUIDL filed on DoraHacks.
 
@@ -42,8 +42,10 @@
 - [x] `npm run agent` connects live: WebSocket handshake succeeds, agent shows online and listening for negotiations. Provider logger now redacts the SDK key (the raw key was briefly written in plaintext to two log files during the first connection test; both were deleted before any git operation, nothing was ever committed or pushed).
 - [x] Added the paid Service "Clyveris Research Brief" via the Configure page's schema field-builder (not raw JSON, a flat name/type/description form): $0.10 USDC, SLA 30min, Deliverable=Schema (brief, status, sources, editorialTake, decisionQuestion, tags, generatedAt), Requirements=Schema (topic required; tags, maxSources optional), matching `agent/types.ts` and `agent/briefSchema.ts` exactly.
 - [x] Confirmed live at `agent.croo.network/agents/1298c200-e1f7-48d3-a154-4cee6c8f8df1` — status LIVE, service listed, "Try this" button present. Agent Store listing requirement is met.
-- [ ] Fund the agent's AA wallet (`0xB12E...C5ed`) with USDC on Base for order fees (not required to register, configure, or list, only to receive/settle real orders).
-- [ ] Run a full live negotiate -> pay -> deliver -> settle cycle end to end with a second (requester) agent.
+- [x] Funded the agent's own AA wallet with $0.10 USDC. This did NOT unblock a real test order, the Navigator "Try this" checkout uses a separate buyer/Navigator balance ($0.00), not the agent's own wallet, distinct balances for seller vs. buyer roles.
+- [~] Live negotiate -> pay -> deliver -> settle test blocked on two fronts: (1) registering a second SDK-based requester agent fails with a CROO-side bug (`Origin https://agent.croo.network not found on Allowlist - update configuration on cloud.reown.com`), reproduced twice, not transient; (2) the Navigator buyer-balance top-up path works but user has no more USDC to fund it right now. Order form is filled and waiting (topic: "What is the cost of delaying a decision when the context feels incomplete?", matches signal-001 for a `covered` result) for whenever funding is available.
+- [x] Added a small "Hire Clyveris on CROO" section to the landing page (`src/app/page.tsx`), links to the live Agent Store listing. First frontend change since the pivot, per explicit user request to work on "both" frontend and backend now.
+- [ ] Deploy the agent (`agent/provider.ts`) to Railway so it runs as an always-on service, not just locally on the user's machine. Railway CLI is installed and already authenticated (`railway whoami` → MystiqueMide), but no project is linked yet (`railway status` → "No linked project found").
 - [ ] Record the max-5-min demo video.
 - [ ] File the BUIDL on DoraHacks before 2026-07-12 10:00.
 - [ ] Decide whether to update `docs/PRD.md` / `docs/ARCHITECTURE.md` for the pivot, or leave them as historical record of the pre-pivot MVP (currently untouched).
@@ -110,8 +112,16 @@
 - Caught and fixed a real secret leak: the SDK's default logger printed the raw `CROO_SDK_KEY` in the WebSocket URL to two log files created in the repo root during testing. Deleted both files and confirmed via `git status`/`git check-ignore` that neither was ever staged or committed. Added a redacting logger wrapper in `agent/provider.ts` so this can't recur, and moved all future agent process logs to the session scratchpad, outside the repo entirely.
 - Filled out and submitted the agent's Configure page via Claude in Chrome per user request ("check the tab opened in chrome and fill it yourself"): description, two tags (Research & Report, Data & Analytics), and the paid Service "Clyveris Research Brief" ($0.10, SLA 30min, Schema deliverable/requirements matching `agent/types.ts` exactly, built field-by-field through the Dashboard's schema builder UI, not a JSON paste box). Confirmed live and orderable at `agent.croo.network/agents/1298c200-e1f7-48d3-a154-4cee6c8f8df1`. Agent Store listing requirement is now met.
 
+### Session 4 - 2026-07-10
+- User funded the agent's own wallet with $0.10 USDC, but that's the seller-side wallet, the Navigator "Try this" checkout needed a separate buyer/Navigator balance (also $0.00), so it still couldn't complete a real order. Confirmed via the actual checkout UI, not assumed.
+- Attempted the alternative path (SDK-based second requester agent) per user's choice. Blocked by a real CROO platform bug, not our code: registering any second agent fails with `Origin https://agent.croo.network not found on Allowlist - update configuration on cloud.reown.com` from their Reown/WalletConnect config, reproduced twice including on a bare page load with no user interaction, so confirmed not transient.
+- Separately hit a real CROO outage mid-session (WebSocket dropping with `ETIMEDOUT`, Dashboard pages failing with "Could not load agent"). Backed off and polled in the background (Monitor tool) instead of hammering their API; recovered within ~5 minutes on its own. The CAP provider's own reconnect logic handled it gracefully throughout, no manual intervention needed.
+- Filled the Navigator order form (topic matching signal-001, so it'll resolve to a `covered` result when actually run) and left it ready. User has no more USDC right now, so the live settle test is deferred, not abandoned, until they can fund the Navigator balance (~$0.15) or CROO fixes the second-agent registration bug.
+- User asked to resume "both" backend and frontend work (previously backend-only). Added a small, contained "Hire Clyveris on CROO" section to the landing page linking to the live listing; otherwise frontend still untouched.
+- Confirmed Railway CLI is installed and already authenticated as MystiqueMide, but no project is linked in this repo yet. Next: deploy `agent/provider.ts` there so it's not dependent on the user's machine staying on.
+
 ## CURRENT BUILD STATE
-- Backend (`agent/`) built, tested, lint-clean, typechecked, running live against the real "Clyveris" CROO agent: WebSocket connected, listening for negotiations, Service configured and Store-listed at $0.10/call. No real order has been negotiated/paid/delivered/settled yet, wallet still has $0.00 USDC.
-- Frontend unchanged from the 2026-07-10 MVP build, still lint/test/build clean.
-- Deployment (Railway for the agent, Vercel for the frontend) is pending: agent currently only runs locally via `npm run agent`; Railway deploy not yet done.
+- Backend (`agent/`) built, tested, lint-clean, typechecked, running live against the real "Clyveris" CROO agent: WebSocket connected, listening for negotiations, Service configured and Store-listed at $0.10/call. Agent's own wallet holds $0.10 USDC. No real order has been negotiated/paid/delivered/settled yet, blocked on buyer-side funding and a CROO platform bug, not on anything in this codebase.
+- Frontend: pre-pivot MVP desk plus one new landing-page section linking to the live CROO listing. Lint/test/build clean.
+- Deployment: agent currently only runs locally via `npm run agent`. Railway CLI authenticated, no project linked yet, deploy in progress. Vercel deploy for the frontend not yet done either.
 - Update `memory.md` after every meaningful project change.
