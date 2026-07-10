@@ -32,6 +32,10 @@ One rule governs both: never fabricate a source. If nothing verified matches a b
 
 ![The signal desk](docs/assets/desk.png)
 
+Try the agent's exact matching pipeline without a wallet: the landing page has a live sample-brief runner, and the desk is fully responsive.
+
+<img src="docs/assets/mobile-landing.png" alt="Clyveris on mobile" width="280">
+
 ## Architecture
 
 ```mermaid

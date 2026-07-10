@@ -42,7 +42,7 @@ function PillNav() {
       </div>
       <Link
         href="/dashboard"
-        className="rounded-full bg-[var(--ink)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-white transition-colors hover:bg-[var(--croo)]"
+        className="whitespace-nowrap rounded-full bg-[var(--ink)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-white transition-colors hover:bg-[var(--croo)]"
       >
         Open desk
       </Link>
