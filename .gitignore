@@ -58,6 +58,7 @@ next-env.d.ts
 
 # internal working notes, agent memory, and planning docs (local only)
 /memory.md
+/dorahacks.md
 /HANDOFF.md
 /AGENTS.md
 /docs/PRD.md
