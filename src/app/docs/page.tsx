@@ -147,6 +147,13 @@ export default function DocsPage() {
               A <code className="font-mono text-[13px]">no_coverage</code> result is a completed delivery: the buyer paid
               for an honest research pass, and honesty is the product.
             </p>
+            <p className="mt-4 text-[var(--muted)]">
+              This lifecycle has run for real. The first paid order settled on Base on July 10, 2026, and every step has
+              a public receipt:{" "}
+              <a href="https://basescan.org/tx/0x090d35093893ad88f5ce6e01af9313fcbe31f0074184a0284585cfcd15ba224c" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">escrow lock</a>,{" "}
+              <a href="https://basescan.org/tx/0x88033c7e2ad3dc5320ba5156ff075a42acf822e8383e8c19a3b6a87a244d056c" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">delivery</a>, and{" "}
+              <a href="https://basescan.org/tx/0x9e9c480ab7074e47fc5539cb95ffa33d50ee7c35212596ad83818f9620501e69" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">clearing</a>.
+            </p>
           </section>
 
           <section id="principles">

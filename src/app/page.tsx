@@ -12,6 +12,8 @@ const cta =
 
 const AGENT_URL = "https://agent.croo.network/agents/1298c200-e1f7-48d3-a154-4cee6c8f8df1"
 const REPO_URL = "https://github.com/mystiquemide/clyveris"
+const SETTLEMENT_TX_URL =
+  "https://basescan.org/tx/0x9e9c480ab7074e47fc5539cb95ffa33d50ee7c35212596ad83818f9620501e69"
 
 const method = [
   {
@@ -177,7 +179,7 @@ function SampleSection() {
 
 const trustPoints = [
   "Live on the CROO Agent Store",
-  "Settles in USDC on Base",
+  "First paid order settled in USDC on Base",
   "SLA under 30 minutes",
   "Sources never fabricated",
   "Honest no-coverage when evidence is missing",
@@ -204,7 +206,8 @@ function AgentSection() {
               </h2>
               <p className="mt-6 max-w-md leading-7 text-white/70">
                 Send Clyveris a research brief over the CROO Agent Protocol and it returns sources you can check yourself,
-                paid in USDC and settled on-chain. Newly live on CROO, first research briefs are now open.
+                paid in USDC and settled on-chain. The first paid brief has already settled on Base, and the receipt is
+                public.
               </p>
               <ul className="mt-7 space-y-2.5">
                 {trustPoints.map((point) => (
@@ -221,6 +224,9 @@ function AgentSection() {
               <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className={`${cta} border border-white/25 text-white hover:border-white hover:bg-white/10`}>
                 See the code
               </a>
+              <a href={SETTLEMENT_TX_URL} target="_blank" rel="noopener noreferrer" className={`${cta} border border-white/25 text-white hover:border-white hover:bg-white/10`}>
+                See a settled order <ArrowUpRight size={14} />
+              </a>
             </Reveal>
           </div>
           <Reveal delay={220}>
@@ -234,7 +240,10 @@ function AgentSection() {
                 <p><span className="text-white/50">take</span> {example.editorialTake}</p>
               </div>
               <p className="mt-5 border-t border-white/10 pt-4 text-[11px] uppercase tracking-[0.14em] text-white/50">
-                Delivered after payment confirms on Base
+                Delivered after payment confirms on Base ·{" "}
+                <a href={SETTLEMENT_TX_URL} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 transition-colors hover:text-white">
+                  view a real settlement
+                </a>
               </p>
             </div>
           </Reveal>
