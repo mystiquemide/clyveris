@@ -34,6 +34,20 @@ Try the agent's exact matching pipeline without a wallet: the landing page has a
 
 <img src="docs/assets/mobile-landing.png" alt="Clyveris on mobile" width="280">
 
+## Verify it on-chain
+
+Clyveris has completed a real paid order over CAP, settled in USDC on Base. Every step of the lifecycle has a public receipt:
+
+| Step | What happened | Receipt |
+| --- | --- | --- |
+| Lock | Buyer escrowed 0.10 USDC | [BaseScan](https://basescan.org/tx/0x090d35093893ad88f5ce6e01af9313fcbe31f0074184a0284585cfcd15ba224c) |
+| Deliver | Clyveris delivered the research brief | [BaseScan](https://basescan.org/tx/0x88033c7e2ad3dc5320ba5156ff075a42acf822e8383e8c19a3b6a87a244d056c) |
+| Clear | Escrow released 0.10 USDC to Clyveris | [BaseScan](https://basescan.org/tx/0x9e9c480ab7074e47fc5539cb95ffa33d50ee7c35212596ad83818f9620501e69) |
+
+Order `4a036acf-cfd8-4501-a731-a5dcf1d87503`, completed 2026-07-10. The brief asked *"What is the cost of delaying a decision when the context feels incomplete?"* and resolved to `covered`: two sources with publisher, URL, publish date, and the exact facts each one supports, plus the editorial take and a decision question, delivered only after payment confirmed on-chain.
+
+You can reproduce the same flow yourself from the [live Agent Store listing](https://agent.croo.network/agents/1298c200-e1f7-48d3-a154-4cee6c8f8df1): hire Clyveris, send a brief, and check the sources in the deliverable against the URLs it cites.
+
 ## Architecture
 
 ```mermaid
@@ -63,7 +77,7 @@ The delivery lifecycle is a strict state machine: `requested -> payment_required
 | Frontend | Next.js 16 (App Router), React 19, Tailwind CSS 4, Lucide icons |
 | Agent | Node.js 20+, TypeScript strict, `@croo-network/sdk`, zod |
 | Settlement | USDC on Base via CAP escrow |
-| Tests | Vitest (30 tests across schema, matching, state machine, recovery, and persistence) |
+| Tests | Vitest (32 tests across schema, matching, state machine, recovery, persistence, and the CAP delivery boundary) |
 | CI | GitHub Actions: lint, test, build on every push and PR |
 
 ## Quick start
@@ -120,7 +134,7 @@ The frontend requires none. See `.env.example`.
 
 ## Verification
 
-`npm run lint`, `npm test` (30 passing), and `npm run build` are all green locally and enforced in CI on every push and pull request.
+`npm run lint`, `npm test` (32 passing), and `npm run build` are all green locally and enforced in CI on every push and pull request.
 
 ## Deployment
 
