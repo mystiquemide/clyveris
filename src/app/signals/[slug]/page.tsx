@@ -1,0 +1,12 @@
+import Link from "next/link"
+import { ArrowUpRight } from "lucide-react"
+import { getSignalBySlug, signals } from "@/lib/signals"
+
+export function generateStaticParams() { return signals.map((signal) => ({ slug: signal.slug })) }
+
+export default async function SignalPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const signal = getSignalBySlug(slug)
+  if (!signal) return <main className="p-8">Signal not found.</main>
+  return <main className="min-h-screen"><header className="mx-auto flex max-w-[1440px] items-center justify-between border-b px-5 py-4 sm:px-8"><Link href="/" className="font-mono text-sm font-bold tracking-[-0.08em]">CLYVERIS</Link><Link href="/dashboard" className="font-mono text-[10px] uppercase tracking-[0.12em] underline underline-offset-4">Back to desk</Link></header><article className="mx-auto max-w-[960px] px-5 py-12 sm:px-8 sm:py-20"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--croo)]">{signal.label}</p><h1 className="mt-5 max-w-4xl text-5xl font-medium tracking-[-0.07em] sm:text-7xl">{signal.title}</h1><div className="mt-10 border-y py-5 font-mono text-[10px] uppercase tracking-[0.12em]"><a href={signal.source.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 underline underline-offset-4">Original source: {signal.source.publisher} <ArrowUpRight size={14} /></a><span className="ml-4 text-[#65685e]">{signal.source.publishedAt}</span></div><section className="mt-12"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--croo)]">What the source says</p><ul className="mt-5 space-y-4 text-xl leading-8">{signal.sourceFacts.map((fact) => <li key={fact}>{fact}</li>)}</ul></section><section className="mt-14 border-l-2 border-[var(--croo)] pl-6"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--croo)]">Clyveris take</p><p className="mt-5 text-2xl leading-9 tracking-[-0.04em]">{signal.editorialTake}</p></section><section className="mt-14 border p-6"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--croo)]">Decision question</p><p className="mt-4 text-2xl tracking-[-0.04em]">{signal.decisionQuestion}</p></section><div className="mt-8 flex flex-wrap gap-2">{signal.tags.map((tag) => <span key={tag} className="border px-3 py-2 font-mono text-[10px] uppercase tracking-[0.1em]">{tag}</span>)}</div></article></main>
+}
