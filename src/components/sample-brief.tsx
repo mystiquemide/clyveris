@@ -1,8 +1,15 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useSyncExternalStore } from "react"
 import { ArrowUpRight, Play } from "lucide-react"
 import { researchBrief } from "../../agent/research"
+import {
+  enqueueTopic,
+  getServerQueueSnapshot,
+  parseQueue,
+  readQueueSnapshot,
+  subscribeQueue,
+} from "@/lib/coverage-queue"
 import { signals } from "@/lib/signals"
 
 const examples = [
@@ -19,12 +26,18 @@ export function SampleBrief({ agentUrl }: { agentUrl: string }) {
     () => (submitted ? researchBrief({ topic: submitted }, signals) : null),
     [submitted],
   )
+  const queue = parseQueue(
+    useSyncExternalStore(subscribeQueue, readQueueSnapshot, getServerQueueSnapshot),
+  )
 
   function run(value: string) {
     const trimmed = value.trim()
     if (trimmed.length < 3) return
     setTopic(trimmed)
     setSubmitted(trimmed)
+    if (researchBrief({ topic: trimmed }, signals).status === "no_coverage") {
+      enqueueTopic(trimmed)
+    }
   }
 
   return (
@@ -97,7 +110,7 @@ export function SampleBrief({ agentUrl }: { agentUrl: string }) {
           <p className="mt-6 border-t border-white/10 pt-4 text-[12px] text-white/60">
             {result.status === "covered"
               ? "This ran the agent's real matching pipeline on the real corpus, right here in your browser. The paid version settles in USDC on Base."
-              : "Nothing verified matches this topic, so Clyveris says so instead of inventing a citation. Honesty is the deliverable."}
+              : "Nothing verified matches this topic, so Clyveris says so instead of inventing a citation. Honesty is the deliverable, and your brief just joined the coverage queue below."}
           </p>
           <a
             href={agentUrl}
@@ -107,6 +120,27 @@ export function SampleBrief({ agentUrl }: { agentUrl: string }) {
           >
             Order the paid version on CROO <ArrowUpRight size={13} />
           </a>
+        </div>
+      )}
+
+      {queue.length > 0 && (
+        <div className="mt-8 rounded-3xl border border-dashed p-6 sm:p-8">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--croo)]">Coverage queue</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--muted)]">This session</p>
+          </div>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-[var(--muted)]">
+            Briefs that came back <code className="font-mono text-[13px]">no_coverage</code> land here. Every refusal
+            is demand: it tells the desk exactly what the next source-curation pass should cover.
+          </p>
+          <ul className="mt-5 space-y-2.5">
+            {queue.map((item) => (
+              <li key={item} className="flex flex-wrap items-center justify-between gap-2 border-t pt-2.5 first:border-t-0 first:pt-0">
+                <span className="max-w-xl text-sm">{item}</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">Awaiting curation</span>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

@@ -177,6 +177,20 @@ function SampleSection() {
   )
 }
 
+const settledOrders = [
+  {
+    orderId: "4a036acf-cfd8-4501-a731-a5dcf1d87503",
+    date: "2026-07-10",
+    price: "0.10 USDC",
+    result: "covered",
+    txs: [
+      ["Lock", "https://basescan.org/tx/0x090d35093893ad88f5ce6e01af9313fcbe31f0074184a0284585cfcd15ba224c"],
+      ["Deliver", "https://basescan.org/tx/0x88033c7e2ad3dc5320ba5156ff075a42acf822e8383e8c19a3b6a87a244d056c"],
+      ["Clear", SETTLEMENT_TX_URL],
+    ],
+  },
+] as const
+
 const trustPoints = [
   "Live on the CROO Agent Store",
   "First paid order settled in USDC on Base",
@@ -224,8 +238,8 @@ function AgentSection() {
               <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className={`${cta} border border-white/25 text-white hover:border-white hover:bg-white/10`}>
                 See the code
               </a>
-              <a href={SETTLEMENT_TX_URL} target="_blank" rel="noopener noreferrer" className={`${cta} border border-white/25 text-white hover:border-white hover:bg-white/10`}>
-                See a settled order <ArrowUpRight size={14} />
+              <a href="#receipts" className={`${cta} border border-white/25 text-white hover:border-white hover:bg-white/10`}>
+                See the receipts
               </a>
             </Reveal>
           </div>
@@ -248,6 +262,33 @@ function AgentSection() {
             </div>
           </Reveal>
         </div>
+        <Reveal delay={120} className="relative border-t border-white/10 px-6 py-10 sm:px-12">
+          <div id="receipts" className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/60">The ledger</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-white/40">Settled on Base</p>
+          </div>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-white/60">
+            Every settled order, with its escrow, delivery, and clearing transactions. Verify it yourself, no trust
+            required.
+          </p>
+          <ul className="mt-6 space-y-4">
+            {settledOrders.map((order) => (
+              <li key={order.orderId} className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-2xl bg-white/5 px-5 py-4 font-mono text-[12px] text-white/75">
+                <span className="text-white/45">{order.orderId.slice(0, 8)}…{order.orderId.slice(-4)}</span>
+                <span>{order.date}</span>
+                <span>{order.price}</span>
+                <span className="rounded-full bg-[var(--croo)] px-2.5 py-0.5 text-[10px] uppercase tracking-[0.1em] text-white">{order.result}</span>
+                <span className="flex flex-wrap gap-4">
+                  {order.txs.map(([label, url]) => (
+                    <a key={label} href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 uppercase tracking-[0.1em] underline underline-offset-4 transition-colors hover:text-white">
+                      {label} <ArrowUpRight size={11} />
+                    </a>
+                  ))}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
       </div>
     </section>
   )
