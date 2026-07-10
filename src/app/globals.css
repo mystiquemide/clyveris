@@ -1,11 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4f3ed;
+  --background: #f0efe9;
   --foreground: #151713;
   --ink: #151713;
-  --paper: #f4f3ed;
+  --ink-soft: #1d1f1a;
+  --paper: #f0efe9;
+  --card: #e4e3da;
   --line: #c7c9bc;
+  --muted: #65685e;
+  --ghost: #d3d2c6;
   --croo: #426b35;
   --croo-dark: #25441e;
 }
@@ -17,12 +21,72 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html { scroll-behavior: smooth; }
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
 * { border-color: var(--line); }
 
 ::selection { background: var(--croo); color: var(--paper); }
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.bar-fill {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.3s;
+}
+
+.is-visible .bar-fill { transform: scaleX(1); }
+
+.intro-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  animation: splash-exit 0.7s cubic-bezier(0.76, 0, 0.24, 1) 1.9s forwards;
+}
+
+.intro-splash p {
+  animation: splash-text 1.8s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+@keyframes splash-exit {
+  to { transform: translateY(-101%); }
+}
+
+@keyframes splash-text {
+  0% { opacity: 0; transform: translateY(16px); }
+  40%, 85% { opacity: 1; transform: none; }
+  100% { opacity: 1; }
+}
+
+.word {
+  opacity: 0.16;
+  transition: opacity 0.5s ease;
+  transition-delay: var(--word-delay, 0ms);
+}
+
+.reveal.is-visible .word { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .bar-fill, .word { transition: none; opacity: 1; transform: none; }
+  .intro-splash { display: none; }
+}

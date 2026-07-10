@@ -28,7 +28,7 @@ export const signals: Signal[] = [
     label: "Operating environment",
     title: "The cost of waiting has changed shape.",
     summary: "A closer look at the small decisions showing up in larger outcomes.",
-    source: { publisher: "Clyveris research desk", url: "https://www.gartner.com/en/documents/7363830", publishedAt: "2026-07-10" },
+    source: { publisher: "Gartner", url: "https://www.gartner.com/en/documents/7363830", publishedAt: "2026-07-10" },
     sourceFacts: ["Decision intelligence brings decision modelling, analytics, and AI into one discipline.", "Market conditions make delayed decisions costly when assumptions are left untested."],
     editorialTake: "The hidden cost is rarely a single missed moment. It compounds through small decisions that stay unchallenged for too long.",
     decisionQuestion: "Which decision are we delaying because the context feels incomplete?",
