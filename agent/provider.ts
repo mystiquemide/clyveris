@@ -1,6 +1,7 @@
 import { AgentClient, DeliverableType, EventType } from "@croo-network/sdk"
 import { signals } from "../src/lib/signals"
 import { parseBriefRequest } from "./briefSchema"
+import { toCrooDeliverable } from "./deliverable"
 import { researchBrief } from "./research"
 import {
   JobStore,
@@ -132,9 +133,10 @@ export async function startProvider() {
       }
 
       const result = researchBrief(job.brief, signals)
+      const deliverable = toCrooDeliverable(result)
       const delivery = await client.deliverOrder(orderId, {
         deliverableType: DeliverableType.Schema,
-        deliverableSchema: JSON.stringify(result),
+        deliverableSchema: JSON.stringify(deliverable),
       })
 
       job = markDelivered(job, result, delivery.txHash)

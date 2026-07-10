@@ -155,8 +155,14 @@
 - Standing UI workflow: use the in-app Browser for web work and Computer Use for Windows apps outside the browser.
 
 ## CURRENT BUILD STATE
-- Backend (`agent/`) is lint-clean, typechecked, and covered by 30 passing tests. It now recovers paid orders after local state loss, handles duplicate paid events, bounds public input, and writes job state atomically. The CROO service remains listed at $0.10 per call.
+- Backend (`agent/`) is lint-clean, typechecked, and covered by 32 passing tests. It now recovers paid orders after local state loss, handles duplicate paid events, bounds public input, writes job state atomically, and converts rich source objects to JSON strings at the CROO boundary to satisfy the Store's flat array schema.
 - Repo: public at github.com/mystiquemide/clyveris, MIT licensed, HANDOFF.md at root.
 - Frontend: full branded redesign completed with audited first-party source metadata, active SVG favicon, stable footer headline, responsive desktop/mobile layouts, and hardened response headers.
-- Deployment: Vercel Git integration is active. Railway is linked to `clyveris-agent/production/agent`; the current audited workspace still needs `railway up`, health verification, and the funded settlement test.
+- Deployment: Vercel Git integration is active and Railway `clyveris-agent/production/agent` is online. The first funded order locked 0.10 USDC on Base, then exposed a deliverable-schema mismatch and was rejected before settlement. The mapping fix is verified locally and needs deployment before a second funded test.
 - Update `memory.md` after every meaningful project change.
+
+### Session 7 - 2026-07-10
+- Verified the Vercel production deployment from GitHub and deployed the CAP provider to Railway. Railway is online on commit `5f88e86`, holds a clean CROO WebSocket connection, and no longer competes with a local provider process for the same SDK key.
+- Submitted funded CROO order `ee9716ec-e8c9-4954-9ba6-e91acb994e0b`. Escrow successfully locked 0.10 USDC on Base in transaction `0x8254066d4d28f3f5506197e1b1f2be24a7f34451e9c5eb3e3d4ef8c1ea14b15c`.
+- The live paid event reached Railway, but CROO rejected the delivery with `INVALID_DELIVERABLE` because its dashboard schema builder validates `sources` as a flat string array while Clyveris sent source objects. CROO then rejected the order, so this attempt has no delivery transaction hash.
+- Added a CAP-boundary serializer that JSON-encodes each structured source into a string without changing the internal research model. Added two regression tests. All 32 tests, lint, and the production build pass.
