@@ -55,3 +55,6 @@ next-env.d.ts
 
 # CAP agent job store (local run state, not source)
 /agent/data/
+
+.vercel
+.env*
