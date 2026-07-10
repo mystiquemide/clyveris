@@ -263,6 +263,7 @@ function Footer() {
             <ul className="mt-4 space-y-3">
               <li><Link href="/" className="transition-colors hover:text-[var(--croo)]">Home</Link></li>
               <li><Link href="/dashboard" className="transition-colors hover:text-[var(--croo)]">The desk</Link></li>
+              <li><Link href="/docs" className="transition-colors hover:text-[var(--croo)]">Docs</Link></li>
               <li><a href="#method" className="transition-colors hover:text-[var(--croo)]">Method</a></li>
             </ul>
           </div>
