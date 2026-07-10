@@ -40,10 +40,10 @@
 - [x] Agent registered on CROO Dashboard as "Clyveris" (Google sign-in account; avatar upload is manual, CAP's automated file upload path is broken, see Known Bugs).
 - [x] `CROO_SDK_KEY` generated and stored in local `.env` (gitignored). `npm run agent` now uses `tsx --env-file=.env` since tsx does not auto-load `.env`.
 - [x] `npm run agent` connects live: WebSocket handshake succeeds, agent shows online and listening for negotiations. Provider logger now redacts the SDK key (the raw key was briefly written in plaintext to two log files during the first connection test; both were deleted before any git operation, nothing was ever committed or pushed).
-- [ ] Add the paid Service (name, price, SLA, Requirements/Deliverable schema) on the Configure page, this is what actually makes the agent orderable and lists it on Agent Store.
-- [ ] Fund the agent's AA wallet with USDC on Base for order fees (not required to register or connect, only to receive/settle real orders).
+- [x] Added the paid Service "Clyveris Research Brief" via the Configure page's schema field-builder (not raw JSON, a flat name/type/description form): $0.10 USDC, SLA 30min, Deliverable=Schema (brief, status, sources, editorialTake, decisionQuestion, tags, generatedAt), Requirements=Schema (topic required; tags, maxSources optional), matching `agent/types.ts` and `agent/briefSchema.ts` exactly.
+- [x] Confirmed live at `agent.croo.network/agents/1298c200-e1f7-48d3-a154-4cee6c8f8df1` — status LIVE, service listed, "Try this" button present. Agent Store listing requirement is met.
+- [ ] Fund the agent's AA wallet (`0xB12E...C5ed`) with USDC on Base for order fees (not required to register, configure, or list, only to receive/settle real orders).
 - [ ] Run a full live negotiate -> pay -> deliver -> settle cycle end to end with a second (requester) agent.
-- [ ] Confirm Agent Store listing is visible once the service is configured.
 - [ ] Record the max-5-min demo video.
 - [ ] File the BUIDL on DoraHacks before 2026-07-12 10:00.
 - [ ] Decide whether to update `docs/PRD.md` / `docs/ARCHITECTURE.md` for the pivot, or leave them as historical record of the pre-pivot MVP (currently untouched).
@@ -60,6 +60,7 @@
 - The Claude-in-Chrome `file_upload` MCP tool cannot upload the agent avatar to the CROO Dashboard, it errors "no longer accepts host filesystem paths" and expects a `files` param the exposed schema doesn't have. Avatar upload on agent.croo.network has to be done by hand (drag-and-drop), the generated mark is at `~/Downloads/clyveris-agent-avatar.png`.
 - CROO's registration flow (Biconomy Nexus `K1Validator`) rejects a connecting wallet address that already has on-chain code (e.g. an EIP-7702 delegation, common now with wallets like Phantom that auto-upgrade EOAs for gas sponsorship/session keys). It needs a plain, never-delegated EOA. Fixed by connecting a fresh Phantom account instead of debugging the delegation.
 - `tsx` does not auto-load `.env`; `npm run agent` must pass `--env-file=.env` explicitly (Node >= 20.6 native flag) or the SDK key never reaches `process.env`.
+- The Configure page's Schema mode for Deliverable/Requirements is a flat field-by-field builder (name, format, type, required, description), not a raw-JSON-schema paste box, and does not support nested object shapes. `sources` is declared as a top-level `array` field with the nested `{publisher,url,publishedAt,facts}` shape only described in text, the real nested contract is enforced by `agent/types.ts` and `agent/briefSchema.ts`, the Dashboard schema is documentation for buyers, not a runtime contract.
 
 ## KEY DEPENDENCIES
 | Package | Version | Why |
@@ -107,9 +108,10 @@
 - User signed in with Google for the CROO Dashboard itself; generated a `CROO_SDK_KEY` and stored it in a local `.env` (gitignored, confirmed with `git check-ignore`).
 - Fixed `npm run agent` to pass `--env-file=.env` (tsx/Node do not auto-load `.env`). First run succeeded: WebSocket connects, agent goes online, listening for negotiations.
 - Caught and fixed a real secret leak: the SDK's default logger printed the raw `CROO_SDK_KEY` in the WebSocket URL to two log files created in the repo root during testing. Deleted both files and confirmed via `git status`/`git check-ignore` that neither was ever staged or committed. Added a redacting logger wrapper in `agent/provider.ts` so this can't recur, and moved all future agent process logs to the session scratchpad, outside the repo entirely.
+- Filled out and submitted the agent's Configure page via Claude in Chrome per user request ("check the tab opened in chrome and fill it yourself"): description, two tags (Research & Report, Data & Analytics), and the paid Service "Clyveris Research Brief" ($0.10, SLA 30min, Schema deliverable/requirements matching `agent/types.ts` exactly, built field-by-field through the Dashboard's schema builder UI, not a JSON paste box). Confirmed live and orderable at `agent.croo.network/agents/1298c200-e1f7-48d3-a154-4cee6c8f8df1`. Agent Store listing requirement is now met.
 
 ## CURRENT BUILD STATE
-- Backend (`agent/`) built, tested, lint-clean, typechecked, and now running live against the real "Clyveris" CROO agent: WebSocket connected, listening for negotiations. No real order has been negotiated/paid/delivered/settled yet, the agent has no Service configured yet so it isn't orderable or Store-listed.
+- Backend (`agent/`) built, tested, lint-clean, typechecked, running live against the real "Clyveris" CROO agent: WebSocket connected, listening for negotiations, Service configured and Store-listed at $0.10/call. No real order has been negotiated/paid/delivered/settled yet, wallet still has $0.00 USDC.
 - Frontend unchanged from the 2026-07-10 MVP build, still lint/test/build clean.
 - Deployment (Railway for the agent, Vercel for the frontend) is pending: agent currently only runs locally via `npm run agent`; Railway deploy not yet done.
 - Update `memory.md` after every meaningful project change.
