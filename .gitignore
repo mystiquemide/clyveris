@@ -56,5 +56,17 @@ next-env.d.ts
 # CAP agent job store (local run state, not source)
 /agent/data/
 
+# internal working notes, agent memory, and planning docs (local only)
+/memory.md
+/HANDOFF.md
+/AGENTS.md
+/docs/PRD.md
+/docs/TASKS.md
+/docs/ANALYTICS.md
+/docs/DESIGN.md
+/docs/ARCHITECTURE.md
+/docs/DEMO_VIDEO_PLAN.md
+/docs/PUBLIC_RELEASE_AUDIT.md
+
 .vercel
 .env*

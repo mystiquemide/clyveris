@@ -146,7 +146,7 @@ The frontend deploys to Vercel and is live at [clyveris.vercel.app](https://clyv
 src/            Next.js desk: landing, dashboard, signal pages
 src/lib/        Signal corpus and filtering, shared by desk and agent
 agent/          CAP provider: schema, matching, job state machine, wiring
-docs/           Design system, deployment guide, product documents
+docs/           Design system, deployment guide, product screenshots
 .github/        CI, CodeQL, Dependabot, issue and PR templates
 ```
 
