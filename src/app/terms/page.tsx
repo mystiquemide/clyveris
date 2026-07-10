@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { SiteFooter } from "@/components/site-footer"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -11,12 +12,12 @@ export default function TermsPage() {
     <main className="min-h-screen">
       <header className="mx-auto flex max-w-[1440px] items-center justify-between border-b px-5 py-4 sm:px-8">
         <Link href="/" className="font-mono text-sm font-bold tracking-[-0.08em]">CLYVERIS</Link>
-        <Link href="/" className="font-mono text-[10px] uppercase tracking-[0.12em] underline underline-offset-4">Home</Link>
+        <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.12em] underline underline-offset-4">Home</Link>
       </header>
       <article className="mx-auto max-w-[760px] px-5 py-14 sm:px-8 sm:py-20">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--croo)]">Terms of Service</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--croo)]">Terms of Service</p>
         <h1 className="mt-4 text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">Short, readable, and in plain language.</h1>
-        <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">Effective 10 July 2026</p>
+        <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--muted)]">Effective 10 July 2026</p>
 
         <div className="mt-10 space-y-8 leading-7">
           <section>
@@ -76,6 +77,7 @@ export default function TermsPage() {
           </section>
         </div>
       </article>
+      <SiteFooter />
     </main>
   )
 }

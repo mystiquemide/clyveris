@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { SiteFooter } from "@/components/site-footer"
 import type { Metadata } from "next"
 import { ArrowUpRight } from "lucide-react"
 
@@ -34,12 +35,12 @@ export default function DocsPage() {
     <main className="min-h-screen">
       <header className="mx-auto flex max-w-[1440px] items-center justify-between border-b px-5 py-4 sm:px-8">
         <Link href="/" className="font-mono text-sm font-bold tracking-[-0.08em]">CLYVERIS</Link>
-        <span className="font-mono text-[10px] uppercase tracking-[0.12em]">Documentation</span>
+        <span className="font-mono text-[11px] uppercase tracking-[0.12em]">Documentation</span>
       </header>
 
       <div className="mx-auto grid max-w-[1200px] gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[220px_1fr]">
         <nav aria-label="Documentation sections" className="lg:sticky lg:top-8 lg:self-start">
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--croo)]">On this page</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--croo)]">On this page</p>
           <ul className="mt-4 space-y-2 font-mono text-[11px] uppercase tracking-[0.1em]">
             {toc.map(([id, label]) => (
               <li key={id}>
@@ -168,6 +169,7 @@ export default function DocsPage() {
           </section>
         </article>
       </div>
+      <SiteFooter />
     </main>
   )
 }

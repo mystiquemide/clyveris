@@ -1,13 +1,14 @@
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowUpRight, Compass, Layers, Newspaper } from "lucide-react"
+import { ArrowUpRight, BadgeCheck, Compass, Layers, Newspaper } from "lucide-react"
 import { IntroSplash } from "@/components/intro-splash"
 import { Reveal } from "@/components/reveal"
+import { SampleBrief } from "@/components/sample-brief"
 import { WordReveal } from "@/components/word-reveal"
 import { signals } from "@/lib/signals"
 
 const cta =
-  "inline-flex items-center gap-2 rounded-full px-5 py-3 font-mono text-[11px] uppercase tracking-[0.12em] transition-all duration-300 hover:scale-[1.04] active:scale-95"
+  "inline-flex items-center gap-2 rounded-full px-5 py-3 font-mono text-xs uppercase tracking-[0.12em] transition-all duration-300 hover:scale-[1.04] active:scale-95"
 
 const AGENT_URL = "https://agent.croo.network/agents/1298c200-e1f7-48d3-a154-4cee6c8f8df1"
 const REPO_URL = "https://github.com/mystiquemide/clyveris"
@@ -34,14 +35,14 @@ function PillNav() {
   return (
     <nav className="fixed left-1/2 top-4 z-50 flex -translate-x-1/2 items-center gap-6 rounded-full bg-white/90 py-2.5 pl-5 pr-2.5 shadow-lg shadow-black/5 backdrop-blur">
       <Link href="/" className="font-mono text-sm font-bold tracking-[-0.08em] text-[var(--ink)]">CLYVERIS</Link>
-      <div className="hidden items-center gap-5 font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--muted)] sm:flex">
+      <div className="hidden items-center gap-5 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--muted)] sm:flex">
         <a href="#method" className="transition-colors hover:text-[var(--ink)]">Method</a>
         <a href="#agent" className="transition-colors hover:text-[var(--ink)]">Agent</a>
         <a href="#signals" className="transition-colors hover:text-[var(--ink)]">Signals</a>
       </div>
       <Link
         href="/dashboard"
-        className="rounded-full bg-[var(--ink)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.12em] text-white transition-colors hover:bg-[var(--croo)]"
+        className="rounded-full bg-[var(--ink)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-white transition-colors hover:bg-[var(--croo)]"
       >
         Open desk
       </Link>
@@ -63,7 +64,7 @@ function Hero() {
       <div className="absolute inset-0 bg-black/35" />
       <div className="relative mx-auto w-full max-w-[1440px] px-5 pb-40 pt-44 text-center sm:px-8">
         <Reveal>
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/70">Independent intelligence</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/70">Independent intelligence</p>
         </Reveal>
         <Reveal delay={120}>
           <h1 className="mx-auto mt-6 max-w-5xl text-[clamp(3.2rem,8.5vw,7.5rem)] font-semibold leading-[0.9] tracking-[-0.05em] text-white">
@@ -71,9 +72,14 @@ function Hero() {
           </h1>
         </Reveal>
         <Reveal delay={240}>
-          <p className="mx-auto mt-8 max-w-xl text-lg leading-7 text-white/80">
-            Clyveris is an editorial signal desk that keeps the original source, the take, and the decision in one place.
+          <p className="mx-auto mt-8 max-w-2xl text-lg leading-7 text-white/85">
+            Clyveris turns verified sources into a decision-ready brief: source facts, an editorial take, and one question
+            worth acting on.
           </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-6 font-mono text-xs uppercase tracking-[0.12em] text-white/80">
+            <a href="#agent" className="underline underline-offset-4 transition-colors hover:text-white">Hire on CROO</a>
+            <a href="#sample" className="underline underline-offset-4 transition-colors hover:text-white">See a sample brief</a>
+          </div>
         </Reveal>
       </div>
       <Reveal delay={360} className="absolute inset-x-0 bottom-8 flex justify-center px-5">
@@ -94,7 +100,7 @@ function SplitSection() {
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-20 sm:py-28">
       <Reveal className="mx-auto max-w-3xl text-center">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--croo)]">The desk</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--croo)]">The desk</p>
         <h2 className="mt-4 text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">Less noise in. More conviction out.</h2>
       </Reveal>
       <Reveal delay={150} className="relative mt-12 overflow-hidden rounded-[40px]">
@@ -111,16 +117,16 @@ function SplitSection() {
             <div className="max-w-2xl overflow-hidden rounded-2xl bg-black/45 backdrop-blur">
               <div className="bar-fill flex items-center justify-between gap-6 rounded-2xl bg-white/85 px-5 py-4">
                 <span className="font-semibold text-[var(--ink)]">What the source says</span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">Verified, linked, dated</span>
+                <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--muted)]">Verified, linked, dated</span>
               </div>
             </div>
             <div className="max-w-xl overflow-hidden rounded-2xl bg-black/45 backdrop-blur">
               <div className="bar-fill flex items-center justify-between gap-6 rounded-2xl bg-[var(--croo)]/90 px-5 py-4 text-white">
                 <span className="font-semibold">The Clyveris take</span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-white/70">Clearly labelled opinion</span>
+                <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-white/70">Clearly labelled opinion</span>
               </div>
             </div>
-            <p className="pt-2 font-mono text-[10px] uppercase tracking-[0.16em] text-white/80">Kept separate. Always.</p>
+            <p className="pt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/80">Kept separate. Always.</p>
           </div>
         </div>
       </Reveal>
@@ -151,6 +157,32 @@ function MethodSection() {
   )
 }
 
+function SampleSection() {
+  return (
+    <section id="sample" className="mx-auto max-w-[1440px] px-4 pb-20 sm:px-8 sm:pb-28">
+      <Reveal className="mx-auto max-w-3xl text-center">
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--croo)]">Try it, no wallet needed</p>
+        <h2 className="mt-4 text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">Run a research brief right now</h2>
+        <p className="mx-auto mt-5 max-w-xl leading-7 text-[var(--muted)]">
+          This is the same matching pipeline the paid agent runs, on the same corpus, live in your browser. Pick an
+          example or type a topic and see exactly what a buyer gets back.
+        </p>
+      </Reveal>
+      <Reveal delay={150} className="mx-auto mt-10 max-w-4xl">
+        <SampleBrief agentUrl={AGENT_URL} />
+      </Reveal>
+    </section>
+  )
+}
+
+const trustPoints = [
+  "Live on the CROO Agent Store",
+  "Settles in USDC on Base",
+  "SLA under 30 minutes",
+  "Sources never fabricated",
+  "Honest no-coverage when evidence is missing",
+]
+
 function AgentSection() {
   const example = signals[0]
   return (
@@ -166,14 +198,21 @@ function AgentSection() {
         <div className="relative grid gap-12 px-6 py-16 sm:px-12 sm:py-24 lg:grid-cols-[1.1fr_1fr] lg:items-center">
           <div>
             <Reveal>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/60">Also on CROO</p>
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/60">Also on CROO</p>
               <h2 className="mt-5 max-w-xl text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-white sm:text-6xl">
                 A research agent other agents can hire
               </h2>
               <p className="mt-6 max-w-md leading-7 text-white/70">
                 Send Clyveris a research brief over the CROO Agent Protocol and it returns sources you can check yourself,
-                paid in USDC and settled on-chain. When it can&apos;t verify a source, it says so instead of inventing one.
+                paid in USDC and settled on-chain. Newly live on CROO, first research briefs are now open.
               </p>
+              <ul className="mt-7 space-y-2.5">
+                {trustPoints.map((point) => (
+                  <li key={point} className="flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.1em] text-white/75">
+                    <BadgeCheck size={15} className="shrink-0 text-[#7fb56d]" /> {point}
+                  </li>
+                ))}
+              </ul>
             </Reveal>
             <Reveal delay={150} className="mt-9 flex flex-wrap items-center gap-4">
               <a href={AGENT_URL} target="_blank" rel="noopener noreferrer" className={`${cta} bg-white text-[var(--ink)] hover:bg-[var(--croo)] hover:text-white`}>
@@ -186,7 +225,7 @@ function AgentSection() {
           </div>
           <Reveal delay={220}>
             <div className="rounded-3xl border border-white/15 bg-white/5 p-6 font-mono text-[12px] leading-6 text-white/80 backdrop-blur">
-              <p className="text-[10px] uppercase tracking-[0.16em] text-white/50">Example deliverable</p>
+              <p className="text-[11px] uppercase tracking-[0.16em] text-white/50">Example deliverable</p>
               <div className="mt-4 space-y-2">
                 <p><span className="text-white/50">brief</span> {example.decisionQuestion}</p>
                 <p><span className="text-white/50">status</span> covered</p>
@@ -194,7 +233,7 @@ function AgentSection() {
                 <p><span className="text-white/50">fact</span> {example.sourceFacts[0]}</p>
                 <p><span className="text-white/50">take</span> {example.editorialTake}</p>
               </div>
-              <p className="mt-5 border-t border-white/10 pt-4 text-[10px] uppercase tracking-[0.14em] text-white/50">
+              <p className="mt-5 border-t border-white/10 pt-4 text-[11px] uppercase tracking-[0.14em] text-white/50">
                 Delivered after payment confirms on Base
               </p>
             </div>
@@ -210,7 +249,7 @@ function SignalsSection() {
     <section id="signals" className="mx-auto max-w-[1440px] px-4 pb-24 sm:px-8">
       <Reveal className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--croo)]">On the desk now</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--croo)]">On the desk now</p>
           <h2 className="mt-4 text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">This week&apos;s read</h2>
         </div>
         <Link href="/dashboard" className="font-mono text-[11px] uppercase tracking-[0.12em] underline underline-offset-4">
@@ -221,9 +260,9 @@ function SignalsSection() {
         {signals.map((signal, index) => (
           <Reveal key={signal.id} delay={index * 100}>
             <Link href={`/signals/${signal.slug}`} className="group grid gap-4 py-8 md:grid-cols-[80px_1fr_auto] md:items-center">
-              <span className="font-mono text-[10px] text-[var(--croo)]">0{index + 1}</span>
+              <span className="font-mono text-[11px] text-[var(--croo)]">0{index + 1}</span>
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">
+                <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--muted)]">
                   {signal.label} · {signal.source.publisher}
                 </p>
                 <h3 className="mt-2 max-w-2xl text-2xl font-medium tracking-[-0.035em] underline-offset-4 group-hover:underline sm:text-3xl">
@@ -283,7 +322,7 @@ function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-14 flex flex-col justify-between gap-3 border-t border-white/10 pt-6 font-mono text-[10px] uppercase tracking-[0.12em] text-white/40 sm:flex-row">
+        <div className="mt-14 flex flex-col justify-between gap-3 border-t border-white/10 pt-6 font-mono text-[11px] uppercase tracking-[0.12em] text-white/40 sm:flex-row">
           <span>© 2026 Clyveris. MIT licensed.</span>
           <span className="flex gap-5">
             <Link href="/privacy" className="transition-colors hover:text-[var(--croo)]">Privacy</Link>
@@ -302,6 +341,7 @@ export default function Home() {
       <PillNav />
       <Hero />
       <SplitSection />
+      <SampleSection />
       <MethodSection />
       <AgentSection />
       <SignalsSection />
