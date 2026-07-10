@@ -3,6 +3,8 @@ import { notFound } from "next/navigation"
 import { ArrowUpRight } from "lucide-react"
 import { getSignalBySlug, signals } from "@/lib/signals"
 
+export const dynamicParams = false
+
 export function generateStaticParams() { return signals.map((signal) => ({ slug: signal.slug })) }
 
 export default async function SignalPage({ params }: { params: Promise<{ slug: string }> }) {
