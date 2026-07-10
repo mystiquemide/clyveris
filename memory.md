@@ -37,9 +37,13 @@
 - [x] Build agent backend: brief validation, provenance-preserving research pipeline, job state machine, CAP provider wiring.
 - [x] Tests: request validation, source provenance, payment-required gating, settled-job persistence, failed-payment handling (16 new tests, all passing).
 - [x] Lint, typecheck, and `next build` all pass with the new `agent/` code present.
-- [ ] User registers the agent + service + wallet in the CROO Dashboard (agent.croo.network) and funds it with USDC on Base — this step needs their login/wallet, not something done in code.
-- [ ] Run `npm run agent` against a live CROO account and confirm a real negotiate -> pay -> deliver -> settle cycle end to end.
-- [ ] List on CROO Agent Store (happens via the Dashboard once the service is configured).
+- [x] Agent registered on CROO Dashboard as "Clyveris" (Google sign-in account; avatar upload is manual, CAP's automated file upload path is broken, see Known Bugs).
+- [x] `CROO_SDK_KEY` generated and stored in local `.env` (gitignored). `npm run agent` now uses `tsx --env-file=.env` since tsx does not auto-load `.env`.
+- [x] `npm run agent` connects live: WebSocket handshake succeeds, agent shows online and listening for negotiations. Provider logger now redacts the SDK key (the raw key was briefly written in plaintext to two log files during the first connection test; both were deleted before any git operation, nothing was ever committed or pushed).
+- [ ] Add the paid Service (name, price, SLA, Requirements/Deliverable schema) on the Configure page, this is what actually makes the agent orderable and lists it on Agent Store.
+- [ ] Fund the agent's AA wallet with USDC on Base for order fees (not required to register or connect, only to receive/settle real orders).
+- [ ] Run a full live negotiate -> pay -> deliver -> settle cycle end to end with a second (requester) agent.
+- [ ] Confirm Agent Store listing is visible once the service is configured.
 - [ ] Record the max-5-min demo video.
 - [ ] File the BUIDL on DoraHacks before 2026-07-12 10:00.
 - [ ] Decide whether to update `docs/PRD.md` / `docs/ARCHITECTURE.md` for the pivot, or leave them as historical record of the pre-pivot MVP (currently untouched).
@@ -53,7 +57,9 @@
 - Legacy Vercel and Railway build commands run `prisma generate`, but Prisma is no longer configured.
 - `docs/PRD.md`, `docs/ARCHITECTURE.md`, `docs/DESIGN.md`, `docs/TASKS.md`, `docs/ANALYTICS.md` describe the pre-pivot standalone-desk product; not yet reconciled with the CAP pivot.
 - The agent's research corpus is the same 3-signal seed dataset as the frontend; real hackathon usage will expose thin coverage (by design, it returns `no_coverage` rather than fabricating, but that means most novel briefs won't resolve yet).
-- No live end-to-end test against a real CROO account yet; only unit tests with a mocked/no SDK connection.
+- The Claude-in-Chrome `file_upload` MCP tool cannot upload the agent avatar to the CROO Dashboard, it errors "no longer accepts host filesystem paths" and expects a `files` param the exposed schema doesn't have. Avatar upload on agent.croo.network has to be done by hand (drag-and-drop), the generated mark is at `~/Downloads/clyveris-agent-avatar.png`.
+- CROO's registration flow (Biconomy Nexus `K1Validator`) rejects a connecting wallet address that already has on-chain code (e.g. an EIP-7702 delegation, common now with wallets like Phantom that auto-upgrade EOAs for gas sponsorship/session keys). It needs a plain, never-delegated EOA. Fixed by connecting a fresh Phantom account instead of debugging the delegation.
+- `tsx` does not auto-load `.env`; `npm run agent` must pass `--env-file=.env` explicitly (Node >= 20.6 native flag) or the SDK key never reaches `process.env`.
 
 ## KEY DEPENDENCIES
 | Package | Version | Why |
@@ -74,6 +80,8 @@
 - Job state is persisted to a local JSON file, not a database, to avoid adding a DB vendor under hackathon time pressure.
 - Claude will never generate, hold, or fund a real CROO agent wallet, or move real USDC. The user runs the CAP Dashboard setup (account, agent registration, service config, wallet funding) themselves and hands over only the resulting env vars.
 - Per explicit user instruction: after every edit/change, commit and push to GitHub, with commits co-authored as `MystiqueMide <splashmediahub@gmail.com>`, never the Claude default co-author line.
+- The agent's identity on CROO is named exactly "Clyveris" (not a new brand), to keep the GitHub repo, frontend, Agent Store listing, and demo video all recognizable as the same product to hackathon judges.
+- The CAP provider's SDK logger is wrapped to redact the raw `CROO_SDK_KEY` from every log line (the default SDK logger prints it in the WebSocket connection URL). Any process output must go to files outside the repo (the session scratchpad), never to a file inside the project, even gitignored ones, to minimize the chance of a secret ever touching a location git could pick up.
 
 ## SESSION LOG
 ### Session 1 - 2026-07-10
@@ -92,8 +100,16 @@
 - Updated `AGENTS.md`, `README.md`, `.env.example` for the pivot. Scope is backend-only; frontend is untouched per explicit instruction.
 - User set standing instructions: keep `memory.md` auto-updated, backend-only work for now, and commit+push to GitHub after every change with co-author `MystiqueMide` (never Claude's default).
 
+### Session 3 - 2026-07-10
+- Recommended keeping the CAP agent name as "Clyveris" for brand consistency; confirmed via the live Agent Store (953 agents, browsed via Claude in Chrome, already signed in on this machine) that nothing in the visible leaderboard/trending/new listings collided.
+- Generated a design-token-consistent avatar (`~/Downloads/clyveris-agent-avatar.png`) since `public/` had no existing brand assets.
+- Registered the agent on the CROO Dashboard via Claude in Chrome. Avatar auto-upload failed (MCP tool limitation, see Known Bugs); name-only registration went through after two blockers: a stuck Phantom extension port (user reconnected it), then a Nexus `K1Validator` rejection because the connected address had EIP-7702 delegation code (user switched to a fresh Phantom account).
+- User signed in with Google for the CROO Dashboard itself; generated a `CROO_SDK_KEY` and stored it in a local `.env` (gitignored, confirmed with `git check-ignore`).
+- Fixed `npm run agent` to pass `--env-file=.env` (tsx/Node do not auto-load `.env`). First run succeeded: WebSocket connects, agent goes online, listening for negotiations.
+- Caught and fixed a real secret leak: the SDK's default logger printed the raw `CROO_SDK_KEY` in the WebSocket URL to two log files created in the repo root during testing. Deleted both files and confirmed via `git status`/`git check-ignore` that neither was ever staged or committed. Added a redacting logger wrapper in `agent/provider.ts` so this can't recur, and moved all future agent process logs to the session scratchpad, outside the repo entirely.
+
 ## CURRENT BUILD STATE
-- Backend (`agent/`) built, tested, lint-clean, typechecked. Not yet run against a live CROO account, no real negotiate/pay/deliver/settle cycle has happened yet.
+- Backend (`agent/`) built, tested, lint-clean, typechecked, and now running live against the real "Clyveris" CROO agent: WebSocket connected, listening for negotiations. No real order has been negotiated/paid/delivered/settled yet, the agent has no Service configured yet so it isn't orderable or Store-listed.
 - Frontend unchanged from the 2026-07-10 MVP build, still lint/test/build clean.
-- Deployment (Railway for the agent, Vercel for the frontend) is pending: needs the user's CROO Dashboard setup (account, agent registration, service config, funded wallet) before the agent can go live.
+- Deployment (Railway for the agent, Vercel for the frontend) is pending: agent currently only runs locally via `npm run agent`; Railway deploy not yet done.
 - Update `memory.md` after every meaningful project change.

@@ -19,12 +19,33 @@ function requireEnv(name: string): string {
   return value
 }
 
+function redact(value: unknown, sdkKey: string): unknown {
+  if (typeof value === "string") return value.split(sdkKey).join("[REDACTED]")
+  if (value instanceof Error) return redact(value.message, sdkKey)
+  if (Array.isArray(value)) return value.map((item) => redact(item, sdkKey))
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, redact(v, sdkKey)]))
+  }
+  return value
+}
+
+function redactingLogger(sdkKey: string) {
+  const scrubMessage = (message: string) => redact(message, sdkKey) as string
+  const scrub = (args: unknown[]) => args.map((arg) => redact(arg, sdkKey))
+  return {
+    info: (message: string, ...args: unknown[]) => console.info(scrubMessage(message), ...scrub(args)),
+    warn: (message: string, ...args: unknown[]) => console.warn(scrubMessage(message), ...scrub(args)),
+    error: (message: string, ...args: unknown[]) => console.error(scrubMessage(message), ...scrub(args)),
+    debug: (message: string, ...args: unknown[]) => console.debug(scrubMessage(message), ...scrub(args)),
+  }
+}
+
 export async function startProvider() {
   const baseURL = requireEnv("CROO_API_URL")
   const wsURL = requireEnv("CROO_WS_URL")
   const sdkKey = requireEnv("CROO_SDK_KEY")
 
-  const client = new AgentClient({ baseURL, wsURL }, sdkKey)
+  const client = new AgentClient({ baseURL, wsURL, logger: redactingLogger(sdkKey) }, sdkKey)
   const store = new JobStore()
   const stream = await client.connectWebSocket()
 

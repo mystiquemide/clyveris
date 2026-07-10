@@ -9,7 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "agent": "tsx agent/provider.ts"
+    "agent": "tsx --env-file=.env agent/provider.ts"
   },
   "dependencies": {
     "@croo-network/sdk": "^0.2.1",
