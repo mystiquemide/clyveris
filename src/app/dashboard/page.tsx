@@ -1,28 +1,12 @@
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import Link from "next/link"
+import { ArrowUpRight, Bookmark, ChevronRight, Search, SlidersHorizontal } from "lucide-react"
+
+const stories = [
+  { tag: "OPERATING ENVIRONMENT", title: "The cost of waiting has changed shape.", copy: "A closer look at the small decisions showing up in larger outcomes." },
+  { tag: "CATEGORY WATCH", title: "Where the next pressure is starting to surface.", copy: "Three sources worth reading alongside each other this week." },
+  { tag: "THE PEOPLE SIGNAL", title: "A growing gap between what teams say and what they fund.", copy: "The language changes early. The budget tends to follow later." },
+]
 
 export default function DashboardPage() {
-  return (
-    <div className="pt-24 px-4">
-      <div className="mx-auto max-w-6xl">
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <p className="mt-2 text-gray-400">Welcome. Customize this page with your data.</p>
-
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { title: "Users", value: "1,284" },
-            { title: "Revenue", value: "$12.4k" },
-            { title: "Uptime", value: "99.9%" },
-            { title: "Projects", value: "47" },
-          ].map((stat) => (
-            <Card key={stat.title}>
-              <CardHeader>
-                <CardDescription>{stat.title}</CardDescription>
-                <CardTitle className="text-2xl">{stat.value}</CardTitle>
-              </CardHeader>
-            </Card>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
+  return <main className="min-h-screen"><header className="mx-auto flex max-w-[1440px] items-center justify-between border-b px-5 py-4 sm:px-8"><Link href="/" className="font-mono text-sm font-bold tracking-[-0.08em]">CLYVERIS</Link><div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.12em]"><Search size={16} /><button aria-label="Filter the desk"><SlidersHorizontal size={16} /></button><span className="hidden border-l pl-4 sm:inline">Your desk</span></div></header><div className="mx-auto grid max-w-[1440px] lg:grid-cols-[220px_1fr] "><aside className="border-b p-5 lg:min-h-[calc(100vh-57px)] lg:border-b-0 lg:border-r"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--croo)]">Wednesday<br />July 10</p><nav className="mt-16 space-y-1 font-mono text-[10px] uppercase tracking-[0.12em]"><a className="block bg-[var(--croo)] px-3 py-3 text-white" href="#top">Today&apos;s read</a><a className="block px-3 py-3" href="#watchlist">Watchlist</a><a className="block px-3 py-3" href="#archive">Archive</a></nav></aside><section className="p-5 sm:p-8 lg:p-12" id="top"><div className="flex items-end justify-between border-b pb-7"><div><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--croo)]">Your signal desk</p><h1 className="mt-3 text-4xl font-medium tracking-[-0.065em] sm:text-6xl">Today&apos;s read.</h1></div><span className="hidden font-mono text-[10px] uppercase tracking-[0.12em] text-[#65685e] sm:block">3 items selected</span></div><div className="divide-y">{stories.map((story, index) => <article key={story.title} className="group grid gap-5 py-8 md:grid-cols-[70px_1fr_auto]"><span className="font-mono text-[10px] text-[var(--croo)]">0{index + 1}</span><div><p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#65685e]">{story.tag}</p><h2 className="mt-3 max-w-2xl text-2xl font-medium tracking-[-0.05em] sm:text-3xl">{story.title}</h2><p className="mt-3 max-w-xl leading-6 text-[#65685e]">{story.copy}</p></div><div className="flex items-start gap-4"><button aria-label={`Save ${story.title}`}><Bookmark size={17} /></button><ArrowUpRight className="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" size={18} /></div></article>)}</div><section id="watchlist" className="mt-10 grid border-t sm:grid-cols-2"><div className="border-b py-6 sm:border-b-0 sm:border-r sm:pr-8"><p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--croo)]">Watchlist</p><p className="mt-4 text-lg tracking-[-0.035em]">No items need your attention yet.</p></div><Link id="archive" href="/" className="group flex items-center justify-between py-6 sm:pl-8"><span className="font-mono text-[10px] uppercase tracking-[0.12em]">Browse the archive</span><ChevronRight size={18} className="transition-transform group-hover:translate-x-1" /></Link></section></section></div></main>
 }
