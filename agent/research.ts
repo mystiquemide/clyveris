@@ -22,8 +22,16 @@ function signalMatchesBrief(signal: Signal, brief: ParsedBriefRequest): boolean 
     ...signal.tags.flatMap((tag) => tokenize(tag)),
   ])
 
+  // One shared generic token ("market", "cost") is too weak to sell as coverage.
+  const requiredOverlap = Math.min(2, briefTokens.size)
+  if (requiredOverlap === 0) return false
+
+  let overlap = 0
   for (const token of briefTokens) {
-    if (signalTokens.has(token)) return true
+    if (signalTokens.has(token)) {
+      overlap += 1
+      if (overlap >= requiredOverlap) return true
+    }
   }
   return false
 }

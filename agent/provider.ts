@@ -53,24 +53,32 @@ export async function startProvider() {
     const negotiationId = event.negotiation_id
     if (!negotiationId) return
 
-    const negotiation = await client.getNegotiation(negotiationId)
-    const parsed = parseBriefRequest(negotiation.requirements)
+    try {
+      const negotiation = await client.getNegotiation(negotiationId)
+      const parsed = parseBriefRequest(negotiation.requirements)
 
-    if (!parsed.ok) {
-      await client.rejectNegotiation(negotiationId, `invalid brief: ${parsed.reason}`)
-      const job = createJob(negotiation, { topic: negotiation.requirements })
-      store.save(markRejected(job, parsed.reason))
-      console.warn(`rejected negotiation ${negotiationId}: ${parsed.reason}`)
-      return
+      if (!parsed.ok) {
+        await client.rejectNegotiation(negotiationId, `invalid brief: ${parsed.reason}`)
+        const job = createJob(negotiation, { topic: negotiation.requirements })
+        store.save(markRejected(job, parsed.reason))
+        console.warn(`rejected negotiation ${negotiationId}: ${parsed.reason}`)
+        return
+      }
+
+      let job = createJob(negotiation, parsed.brief)
+      store.save(job)
+
+      const accepted = await client.acceptNegotiation(negotiationId)
+      job = markPaymentRequired(job, accepted.order.orderId, accepted.order.price, accepted.order.paymentToken)
+      store.save(job)
+      console.info(`order ${accepted.order.orderId} created for negotiation ${negotiationId}, awaiting payment`)
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : "unknown negotiation failure"
+      console.error(`failed to handle negotiation ${negotiationId}: ${reason}`)
+      await client
+        .rejectNegotiation(negotiationId, "provider hit an internal error while reviewing this brief")
+        .catch(() => undefined)
     }
-
-    let job = createJob(negotiation, parsed.brief)
-    store.save(job)
-
-    const accepted = await client.acceptNegotiation(negotiationId)
-    job = markPaymentRequired(job, accepted.order.orderId, accepted.order.price, accepted.order.paymentToken)
-    store.save(job)
-    console.info(`order ${accepted.order.orderId} created for negotiation ${negotiationId}, awaiting payment`)
   })
 
   stream.on(EventType.OrderPaid, async (event) => {
@@ -78,7 +86,11 @@ export async function startProvider() {
     if (!orderId) return
 
     let job = store.all().find((candidate) => candidate.orderId === orderId)
-    if (!job) return
+    if (!job) {
+      console.error(`paid order ${orderId} has no local job record, rejecting so the buyer is not left hanging`)
+      await client.rejectOrder(orderId, "provider has no record of this order").catch(() => undefined)
+      return
+    }
 
     try {
       const order = await client.getOrder(orderId)
@@ -108,19 +120,21 @@ export async function startProvider() {
   stream.on(EventType.OrderExpired, (event) => {
     const orderId = event.order_id
     const job = orderId ? store.all().find((candidate) => candidate.orderId === orderId) : undefined
-    if (job) store.save(markFailed(job, "order expired before payment"))
+    if (job && job.status !== "delivered") store.save(markFailed(job, "order expired before payment"))
   })
 
   stream.on(EventType.OrderRejected, (event) => {
     const orderId = event.order_id
     const job = orderId ? store.all().find((candidate) => candidate.orderId === orderId) : undefined
-    if (job) store.save(markFailed(job, event.reason ?? "order rejected"))
+    if (job && job.status !== "delivered") store.save(markFailed(job, event.reason ?? "order rejected"))
   })
 
-  process.on("SIGINT", () => {
+  const shutdown = () => {
     stream.close()
     process.exit(0)
-  })
+  }
+  process.on("SIGINT", shutdown)
+  process.on("SIGTERM", shutdown)
 
   console.info("Clyveris research agent online, listening for CAP negotiations")
 }

@@ -25,6 +25,13 @@ describe("parseBriefRequest", () => {
     expect(result.ok).toBe(false)
   })
 
+  it("rejects a brief with a topic longer than 500 characters", () => {
+    const result = parseBriefRequest(JSON.stringify({ topic: "x".repeat(501) }))
+
+    expect(result.ok).toBe(false)
+    if (!result.ok) expect(result.reason).toMatch(/at most 500/)
+  })
+
   it("rejects a brief missing the required topic field", () => {
     const result = parseBriefRequest(JSON.stringify({ tags: ["pricing"] }))
 

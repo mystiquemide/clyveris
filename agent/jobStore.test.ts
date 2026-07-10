@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, rmSync } from "node:fs"
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import type { Negotiation } from "@croo-network/sdk"
@@ -92,6 +92,16 @@ describe("job state machine", () => {
     expect(failed.result).toBeUndefined()
   })
 
+  it("refuses to overwrite a delivered job with a failure", () => {
+    const job = createJob(fakeNegotiation(), { topic: "pricing pressure" }, fixedNow)
+    const withOrder = markPaymentRequired(job, "order-1", "1000000", "USDC", fixedNow)
+    const paid = markPaid(withOrder, "0xpay", fixedNow)
+    const researching = markResearching(paid, fixedNow)
+    const delivered = markDelivered(researching, sampleResult, "0xdeliver", fixedNow)
+
+    expect(() => markFailed(delivered, "late rejection event", fixedNow)).toThrow()
+  })
+
   it("rejects an invalid brief before any order is created", () => {
     const job = createJob(fakeNegotiation(), { topic: "pricing pressure" }, fixedNow)
     const rejected = markRejected(job, "invalid brief: topic too short", fixedNow)
@@ -130,5 +140,15 @@ describe("JobStore persistence", () => {
     const reloaded = new JobStore(path)
     expect(reloaded.get("neg-1")?.status).toBe("delivered")
     expect(reloaded.get("neg-1")?.result).toEqual(sampleResult)
+  })
+
+  it("sets a corrupt store file aside and starts empty instead of crashing", () => {
+    writeFileSync(path, "{ this is not json")
+
+    const store = new JobStore(path)
+
+    expect(store.all()).toEqual([])
+    expect(existsSync(path)).toBe(false)
+    expect(readdirSync(dir).some((name) => name.includes("corrupt"))).toBe(true)
   })
 })

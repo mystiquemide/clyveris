@@ -12,7 +12,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "agent": "tsx --env-file=.env agent/provider.ts"
+    "agent": "tsx --env-file=.env agent/provider.ts",
+    "agent:start": "tsx agent/provider.ts"
   },
   "dependencies": {
     "@croo-network/sdk": "^0.2.1",
@@ -20,6 +21,7 @@
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "tsx": "^4.23.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -30,7 +32,6 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "tailwindcss": "^4",
-    "tsx": "^4.23.0",
     "typescript": "^5",
     "vitest": "^4.1.10"
   }

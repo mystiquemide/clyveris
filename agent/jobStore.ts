@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs"
+import { mkdirSync, readFileSync, renameSync, writeFileSync, existsSync } from "node:fs"
 import { dirname, join } from "node:path"
 import type { Negotiation } from "@croo-network/sdk"
 import type { ResearchBriefRequest, ResearchDeliverable, ResearchJob } from "./types"
@@ -63,6 +63,9 @@ export function markDelivered(
 }
 
 export function markFailed(job: ResearchJob, reason: string, now: () => Date = () => new Date()): ResearchJob {
+  if (job.status === "delivered") {
+    throw new Error(`cannot mark delivered job ${job.id} failed`)
+  }
   return { ...job, status: "failed", failureReason: reason, updatedAt: now().toISOString() }
 }
 
@@ -82,9 +85,15 @@ export class JobStore {
 
   private load(): void {
     if (!existsSync(this.path)) return
-    const raw = readFileSync(this.path, "utf-8")
-    const records: ResearchJob[] = raw.trim().length > 0 ? JSON.parse(raw) : []
-    for (const job of records) this.jobs.set(job.id, job)
+    try {
+      const raw = readFileSync(this.path, "utf-8")
+      const records: ResearchJob[] = raw.trim().length > 0 ? JSON.parse(raw) : []
+      for (const job of records) this.jobs.set(job.id, job)
+    } catch {
+      const backup = `${this.path}.corrupt-${Date.now()}`
+      renameSync(this.path, backup)
+      console.warn(`job store at ${this.path} was unreadable, moved it to ${backup} and starting empty`)
+    }
   }
 
   private persist(): void {

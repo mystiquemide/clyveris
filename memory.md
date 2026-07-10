@@ -45,7 +45,15 @@
 - [x] Funded the agent's own AA wallet with $0.10 USDC. This did NOT unblock a real test order, the Navigator "Try this" checkout uses a separate buyer/Navigator balance ($0.00), not the agent's own wallet, distinct balances for seller vs. buyer roles.
 - [~] Live negotiate -> pay -> deliver -> settle test blocked on two fronts: (1) registering a second SDK-based requester agent fails with a CROO-side bug (`Origin https://agent.croo.network not found on Allowlist - update configuration on cloud.reown.com`), reproduced twice, not transient; (2) the Navigator buyer-balance top-up path works but user has no more USDC to fund it right now. Order form is filled and waiting (topic: "What is the cost of delaying a decision when the context feels incomplete?", matches signal-001 for a `covered` result) for whenever funding is available.
 - [x] Added a small "Hire Clyveris on CROO" section to the landing page (`src/app/page.tsx`), links to the live Agent Store listing. First frontend change since the pivot, per explicit user request to work on "both" frontend and backend now.
-- [ ] Deploy the agent (`agent/provider.ts`) to Railway so it runs as an always-on service, not just locally on the user's machine. Railway CLI is installed and already authenticated (`railway whoami` → MystiqueMide), but no project is linked yet (`railway status` → "No linked project found").
+- [x] Full audit (elite-hackathon-audit + repo-audit) run 2026-07-10: code healthy, submission blockers were the private boilerplate-named repo, missing license, no video, no BUIDL, no settled order, agent undeployed.
+- [x] Repo moved to `github.com/mystiquemide/clyveris` (public, MIT LICENSE via merge of the user's fresh repo baseline). Old `boilerplate-web3` remote removed entirely.
+- [x] Hardened the agent for unattended running: try/catch around the NegotiationCreated handler (an SDK error no longer crashes the process), paid orders with no local job record are rejected loudly instead of silently dropped, SIGTERM handled alongside SIGINT, corrupt `jobs.json` is set aside instead of crash-looping, `markFailed` refuses to overwrite a delivered job, topic capped at 500 chars, matching now needs 2 overlapping tokens (or all tokens for one-word briefs) so a single generic word is never sold as coverage. 5 new tests, 25 total, all passing.
+- [x] Frontend fixes: dashboard date is computed at render (was hardcoded "Thursday July 10"), saved signals now persist to sessionStorage via useSyncExternalStore (the copy's promise is finally true), landing brief cards link to /dashboard. Empty `prisma/` dir deleted. `tsx` moved to dependencies and `agent:start` script added so hosts without a `.env` file can run the agent.
+- [x] `HANDOFF.md` added at repo root: current state, what's left, deploy notes, CROO platform quirks.
+- [ ] Deploy the agent (`agent/provider.ts`) to Railway so it runs as an always-on service, not just locally on the user's machine. Railway CLI is installed and already authenticated (`railway whoami` → MystiqueMide), but no project is linked yet. Use `npm run agent:start` as the service start command plus the three `CROO_*` env vars.
+- [ ] Deploy the frontend to Vercel.
+- [ ] Redesign the frontend UI using a forensic teardown of fixaplan.com as the design reference (user request 2026-07-10); user will keep iterating on design after.
+- [ ] Live settle test once the user funds the Navigator buyer balance (~$0.15).
 - [ ] Record the max-5-min demo video.
 - [ ] File the BUIDL on DoraHacks before 2026-07-12 10:00.
 - [ ] Decide whether to update `docs/PRD.md` / `docs/ARCHITECTURE.md` for the pivot, or leave them as historical record of the pre-pivot MVP (currently untouched).
@@ -55,8 +63,6 @@
 - CAP research agent backend: brief intake, provenance-preserving matching against curated signals, payment-gated delivery, on-chain settlement wiring, job persistence.
 
 ## KNOWN BUGS / TECH DEBT
-- The Git remote is still named for the prior Web3 boilerplate (`boilerplate-web3`).
-- Legacy Vercel and Railway build commands run `prisma generate`, but Prisma is no longer configured.
 - `docs/PRD.md`, `docs/ARCHITECTURE.md`, `docs/DESIGN.md`, `docs/TASKS.md`, `docs/ANALYTICS.md` describe the pre-pivot standalone-desk product; not yet reconciled with the CAP pivot.
 - The agent's research corpus is the same 3-signal seed dataset as the frontend; real hackathon usage will expose thin coverage (by design, it returns `no_coverage` rather than fabricating, but that means most novel briefs won't resolve yet).
 - The Claude-in-Chrome `file_upload` MCP tool cannot upload the agent avatar to the CROO Dashboard, it errors "no longer accepts host filesystem paths" and expects a `files` param the exposed schema doesn't have. Avatar upload on agent.croo.network has to be done by hand (drag-and-drop), the generated mark is at `~/Downloads/clyveris-agent-avatar.png`.
@@ -120,8 +126,16 @@
 - User asked to resume "both" backend and frontend work (previously backend-only). Added a small, contained "Hire Clyveris on CROO" section to the landing page linking to the live listing; otherwise frontend still untouched.
 - Confirmed Railway CLI is installed and already authenticated as MystiqueMide, but no project is linked in this repo yet. Next: deploy `agent/provider.ts` there so it's not dependent on the user's machine staying on.
 
+### Session 5 - 2026-07-10
+- Ran the full pre-submission audit (elite-hackathon-audit + repo-audit). Verified lint/tests/build green, then found the real blockers were all submission-side: the GitHub repo was PRIVATE, still named `boilerplate-web3` with the boilerplate description, and had no license, plus no video, no BUIDL, no settled order, agent undeployed.
+- User created `github.com/mystiquemide/clyveris` (public, MIT). Merged its baseline into the project history (kept our README, took their LICENSE), pushed everything there, removed the old remote. User confirmed memory.md stays in the repo.
+- Applied the audit's code fixes (backend hardening + frontend truthfulness, see ACTIVE WORK). The new `react-hooks/set-state-in-effect` lint rule pushed the saved-signals feature to a proper `useSyncExternalStore` external-store pattern instead of setState-in-effect.
+- Added HANDOFF.md. All 25 tests, lint, and build pass.
+- User queued next: deploy frontend to Vercel, keep backend deploy-ready (funding for the live settle test comes later), then redesign the frontend using a forensic teardown of fixaplan.com via Claude in Chrome, sourcing reference imagery from Pinterest.
+
 ## CURRENT BUILD STATE
-- Backend (`agent/`) built, tested, lint-clean, typechecked, running live against the real "Clyveris" CROO agent: WebSocket connected, listening for negotiations, Service configured and Store-listed at $0.10/call. Agent's own wallet holds $0.10 USDC. No real order has been negotiated/paid/delivered/settled yet, blocked on buyer-side funding and a CROO platform bug, not on anything in this codebase.
-- Frontend: pre-pivot MVP desk plus one new landing-page section linking to the live CROO listing. Lint/test/build clean.
-- Deployment: agent currently only runs locally via `npm run agent`. Railway CLI authenticated, no project linked yet, deploy in progress. Vercel deploy for the frontend not yet done either.
+- Backend (`agent/`) built, tested (25 tests), lint-clean, typechecked, hardened against crashes/silent drops, live against the real "Clyveris" CROO agent when running. Store-listed at $0.10/call. Agent's own wallet holds $0.10 USDC. No real order settled yet, blocked on buyer-side funding and a CROO platform bug, not on this codebase.
+- Repo: public at github.com/mystiquemide/clyveris, MIT licensed, HANDOFF.md at root.
+- Frontend: pre-pivot MVP desk plus the CROO listing section; date and saved-signals fixes in. Full redesign (fixaplan.com-inspired) queued.
+- Deployment: agent runs locally via `npm run agent`, deploy-ready for Railway via `npm run agent:start`. Vercel deploy for the frontend queued.
 - Update `memory.md` after every meaningful project change.

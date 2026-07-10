@@ -45,7 +45,7 @@ export default function Home() {
       <section id="brief" className="mx-auto max-w-[1440px] border-b px-5 py-16 sm:px-8 sm:py-24">
         <div className="mb-12 flex items-end justify-between"><div><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--croo)]">The Clyveris brief</p><h2 className="mt-3 text-4xl font-medium tracking-[-0.065em] sm:text-5xl">A tighter reading.</h2></div><span className="hidden font-mono text-[10px] uppercase tracking-[0.14em] sm:block">Updated weekly</span></div>
         <div className="grid border-t md:grid-cols-3">
-          {briefs.map(([number, title, copy]) => <article key={number} className="group border-b p-6 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 sm:p-8"><p className="font-mono text-[10px] text-[var(--croo)]">{number}</p><h3 className="mt-16 text-xl font-medium tracking-[-0.04em]">{title}</h3><p className="mt-3 max-w-xs leading-6 text-[#65685e]">{copy}</p><ArrowUpRight className="mt-12 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" size={18} /></article>)}
+          {briefs.map(([number, title, copy]) => <Link key={number} href="/dashboard" className="group border-b p-6 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 sm:p-8"><p className="font-mono text-[10px] text-[var(--croo)]">{number}</p><h3 className="mt-16 text-xl font-medium tracking-[-0.04em]">{title}</h3><p className="mt-3 max-w-xs leading-6 text-[#65685e]">{copy}</p><ArrowUpRight className="mt-12 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" size={18} /></Link>)}
         </div>
       </section>
 

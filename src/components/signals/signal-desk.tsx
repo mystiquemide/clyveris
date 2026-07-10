@@ -2,8 +2,47 @@
 
 import Link from "next/link"
 import { Bookmark, SlidersHorizontal } from "lucide-react"
-import { useMemo, useState } from "react"
+import { useMemo, useState, useSyncExternalStore } from "react"
 import { filterSignals, signals, type SignalCategory } from "@/lib/signals"
+
+const SAVED_STORAGE_KEY = "clyveris:saved-signals"
+
+// Hydration-safe "is this running on the client yet" flag: false during SSR
+// and the first hydration render, true afterwards.
+const emptySubscribe = () => () => {}
+function useHydrated() {
+  return useSyncExternalStore(emptySubscribe, () => true, () => false)
+}
+
+// Saved signals live in sessionStorage (with an in-memory fallback when
+// storage is blocked), exposed to React as an external store so SSR, hydration,
+// and reloads all agree on the value.
+let savedMemoryFallback = "[]"
+const savedListeners = new Set<() => void>()
+
+function subscribeSaved(listener: () => void) {
+  savedListeners.add(listener)
+  return () => savedListeners.delete(listener)
+}
+
+function readSavedSnapshot(): string {
+  try {
+    return sessionStorage.getItem(SAVED_STORAGE_KEY) ?? savedMemoryFallback
+  } catch {
+    return savedMemoryFallback
+  }
+}
+
+function writeSaved(ids: Set<string>) {
+  const raw = JSON.stringify([...ids])
+  savedMemoryFallback = raw
+  try {
+    sessionStorage.setItem(SAVED_STORAGE_KEY, raw)
+  } catch {
+    // Storage full or blocked, the in-memory fallback still works for this view.
+  }
+  for (const listener of savedListeners) listener()
+}
 
 const filters: { value: SignalCategory | "all" | "saved"; label: string }[] = [
   { value: "all", label: "All" },
@@ -14,23 +53,38 @@ const filters: { value: SignalCategory | "all" | "saved"; label: string }[] = [
 ]
 
 export function SignalDesk() {
+  const hydrated = useHydrated()
   const [filter, setFilter] = useState<(typeof filters)[number]["value"]>("all")
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set())
+  const savedRaw = useSyncExternalStore(subscribeSaved, readSavedSnapshot, () => "[]")
+  const savedIds = useMemo(() => {
+    try {
+      return new Set<string>(JSON.parse(savedRaw))
+    } catch {
+      return new Set<string>()
+    }
+  }, [savedRaw])
   const visibleSignals = useMemo(() => filterSignals(signals, filter, savedIds), [filter, savedIds])
 
+  const today = useMemo(() => {
+    if (!hydrated) return null
+    const now = new Date()
+    return {
+      weekday: now.toLocaleDateString("en-US", { weekday: "long" }),
+      date: now.toLocaleDateString("en-US", { month: "long", day: "numeric" }),
+    }
+  }, [hydrated])
+
   function toggleSaved(id: string) {
-    setSavedIds((current) => {
-      const next = new Set(current)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
+    const next = new Set(savedIds)
+    if (next.has(id)) next.delete(id)
+    else next.add(id)
+    writeSaved(next)
   }
 
   return (
     <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[220px_1fr]">
       <aside className="border-b p-5 lg:min-h-[calc(100vh-57px)] lg:border-b-0 lg:border-r">
-        <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--croo)]">Thursday<br />July 10</p>
+        <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--croo)]">{today ? <>{today.weekday}<br />{today.date}</> : <>&nbsp;<br />&nbsp;</>}</p>
         <nav className="mt-12 space-y-1 font-mono text-[10px] uppercase tracking-[0.12em]">
           <a className="block bg-[var(--croo)] px-3 py-3 text-white" href="#top">Today&apos;s read</a>
           <a className="block px-3 py-3" href="#watchlist">Watchlist</a>

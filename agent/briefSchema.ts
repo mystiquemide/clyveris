@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const briefRequestSchema = z.object({
-  topic: z.string().trim().min(3, "topic must be at least 3 characters"),
+  topic: z.string().trim().min(3, "topic must be at least 3 characters").max(500, "topic must be at most 500 characters"),
   tags: z.array(z.string().trim().min(1)).max(10).optional(),
   maxSources: z.number().int().min(1).max(10).optional(),
 })

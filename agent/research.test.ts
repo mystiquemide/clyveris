@@ -29,6 +29,20 @@ describe("researchBrief", () => {
     expect(result.editorialTake).toMatch(/no verified source/i)
   })
 
+  it("does not sell a single shared generic token as coverage", () => {
+    const result = researchBrief({ topic: "market sizing for pet food" }, signals, fixedNow)
+
+    expect(result.status).toBe("no_coverage")
+    expect(result.sources).toEqual([])
+  })
+
+  it("still matches a single-word topic when that word is genuinely covered", () => {
+    const result = researchBrief({ topic: "waiting" }, signals, fixedNow)
+
+    expect(result.status).toBe("covered")
+    expect(result.sources.length).toBeGreaterThan(0)
+  })
+
   it("caps the number of sources at maxSources", () => {
     const result = researchBrief({ topic: "market category signal team", maxSources: 1 }, signals, fixedNow)
 
