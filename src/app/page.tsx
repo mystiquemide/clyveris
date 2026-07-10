@@ -51,7 +51,7 @@ function PillNav() {
 
 function Hero() {
   return (
-    <header className="relative flex min-h-[94vh] flex-col justify-end overflow-hidden">
+    <header className="relative flex min-h-[94vh] flex-col justify-end overflow-hidden bg-[#5a5347]">
       <Image
         src="/hero-desk.jpg"
         alt="A reader enjoying the morning paper by a sunny window"

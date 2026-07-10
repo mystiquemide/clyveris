@@ -133,6 +133,15 @@
 - Added HANDOFF.md. All 25 tests, lint, and build pass.
 - User queued next: deploy frontend to Vercel, keep backend deploy-ready (funding for the live settle test comes later), then redesign the frontend using a forensic teardown of fixaplan.com via Claude in Chrome, sourcing reference imagery from Pinterest.
 
+### Session 5 addendum - 2026-07-10 (afternoon)
+- Landing page fully redesigned using a forensic teardown of fixaplan.com (Framer + Lenis site; replicated the feel with CSS-only motion: intro splash, staggered reveals, word reveals, bar fills, hover micro-interactions, reduced-motion support). SR-71 section-by-section verification done against the live reference.
+- Photography: licensed Unsplash originals in `public/` (bright morning-paper hero, broadsheet split section, night desk for the dark agent panel). Pinterest was requested but pins are rights-unknown and lower-res, so Unsplash originals were used and copies placed in ~/Downloads for review.
+- Production fixes found by driving the deployed site: /_next/image 404s under the services-mode Vercel deployment (fixed with images.unoptimized), unknown signal slugs returned 500 (fixed with dynamicParams=false), hero gray flash on slow decode (smaller hero file + dark hero base), splash unmount fallback timer.
+- Hostile-judge sweep: dead search icon removed from dashboard, signal-001 publisher corrected to Gartner (URL is a Gartner doc), branded 404 added, saves verified to persist via sessionStorage on the live site.
+- Microcopy audit applied (consistent "Open" CTAs, "signals in view", actionable watchlist empty state, "See the code").
+- GitHub launch polish: README rewritten product-first with real screenshots (docs/assets/, captured via Playwright + system Chrome), Mermaid architecture, truthful badges; added CONTRIBUTING, SECURITY, CHANGELOG, docs/DEPLOYMENT.md, docs/DESIGN-SYSTEM.md, CodeQL, Dependabot, issue/PR templates. Tagged v0.1.0.
+- Railway agent deploy is prepped (railway.toml runs agent:start) but `railway up` was blocked by the permission classifier as an unrequested production deploy; user needs to run `railway up` or say the word.
+
 ## CURRENT BUILD STATE
 - Backend (`agent/`) built, tested (25 tests), lint-clean, typechecked, hardened against crashes/silent drops, live against the real "Clyveris" CROO agent when running. Store-listed at $0.10/call. Agent's own wallet holds $0.10 USDC. No real order settled yet, blocked on buyer-side funding and a CROO platform bug, not on this codebase.
 - Repo: public at github.com/mystiquemide/clyveris, MIT licensed, HANDOFF.md at root.
