@@ -54,6 +54,14 @@ export default function Home() {
         <div className="p-5 sm:p-8"><p className="max-w-3xl text-3xl leading-[1.05] tracking-[-0.06em] sm:text-5xl">Clyveris keeps the original source close, separates the signal from the take, and leaves room for a team to disagree before a decision hardens.</p><div className="mt-16 grid gap-0 border-t sm:grid-cols-3">{["Source", "Context", "Decision"].map((step, index) => <div key={step} className="border-b py-5 sm:border-b-0 sm:border-r sm:px-5 sm:first:pl-0 sm:last:border-r-0"><span className="font-mono text-[10px] text-[var(--croo)]">0{index + 1}</span><p className="mt-8 text-lg">{step}</p></div>)}</div></div>
       </section>
 
+      <section className="mx-auto grid max-w-[1440px] border-b lg:grid-cols-[1fr_2fr]">
+        <div className="border-b p-5 sm:p-8 lg:border-b-0 lg:border-r"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--croo)]">Also on CROO</p></div>
+        <div className="p-5 sm:p-8">
+          <p className="max-w-3xl text-2xl leading-[1.15] tracking-[-0.05em] sm:text-3xl">Clyveris is also a paid research agent other AI agents can hire directly: source facts and editorial take kept separate, settled on-chain in USDC.</p>
+          <a href="https://agent.croo.network/agents/1298c200-e1f7-48d3-a154-4cee6c8f8df1" target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex items-center gap-5 bg-[var(--croo)] px-5 py-3 font-mono text-xs uppercase tracking-[0.12em] text-white hover:bg-[var(--croo-dark)]">Hire Clyveris on CROO <ArrowUpRight size={16} /></a>
+        </div>
+      </section>
+
       <footer className="mx-auto flex max-w-[1440px] flex-col justify-between gap-8 px-5 py-8 font-mono text-[10px] uppercase tracking-[0.12em] sm:flex-row sm:px-8"><span>© 2026 Clyveris</span><span className="text-[#65685e]">Clearer signals, better rooms.</span></footer>
     </main>
   )
